@@ -1,0 +1,5 @@
+*.bit
+*.fasm
+*.frames
+*.json
+*.svg

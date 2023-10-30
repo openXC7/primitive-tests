@@ -1,0 +1,2 @@
+read_ilang mult_harness.rtlil
+write_verilog mult_harness-core.v

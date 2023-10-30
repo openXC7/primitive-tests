@@ -1,0 +1,8 @@
+verilog_defaults -push
+verilog_defaults -add -defer
+read_verilog /devel/HDL/kintex-reveng/cfg-tests/bscane2/build/top.v
+verilog_defaults -pop
+attrmap -tocase keep -imap keep="true" keep=1 -imap keep="false" keep=0 -remove keep=0
+
+synth_xilinx -flatten -abc9 -nobram -arch xc7  -top top
+write_json  top.json

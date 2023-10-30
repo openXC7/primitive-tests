@@ -1,0 +1,2 @@
+read_json mult_harness.json
+write_verilog netlist.v
