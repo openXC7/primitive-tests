@@ -11,9 +11,9 @@ module blinky (
 
     MMCME2_ADV #(
         .BANDWIDTH("OPTIMIZED"),
-        .CLKFBOUT_MULT_F(20.250),
-        .CLKIN1_PERIOD(20.0),
-        .CLKOUT0_DIVIDE_F(20.125),
+        .CLKFBOUT_MULT_F(10.250),
+        .CLKIN1_PERIOD(10.0),
+        .CLKOUT0_DIVIDE_F(20.25),
         .CLKOUT0_PHASE(1'd0),
         .CLKOUT1_DIVIDE(8'd21),
         .CLKOUT1_PHASE(1'd0),
@@ -24,15 +24,16 @@ module blinky (
         .DIVCLK_DIVIDE(1'd1),
         .REF_JITTER1(0.01)
     ) MMCME2_ADV (
+        .PSINCDEC(1'b0),
         .CLKFBIN(feedback),
         .CLKIN1(clk),
         .PWRDWN(1'b0),
         .RST(1'b0),
         .CLKFBOUT(feedback),
         .CLKOUT0(pll_clk),
-        .CLKOUT1(clkout[0]),
-        .CLKOUT2(clkout[1]),
-        .CLKOUT3(clkout[2]),
+//        .CLKOUT1(clkout[0]),
+//        .CLKOUT2(clkout[1]),
+//        .CLKOUT3(clkout[2]),
         .LOCKED()
     );
 
