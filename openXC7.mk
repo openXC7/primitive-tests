@@ -32,7 +32,7 @@ ${PROJECT}.json: ${TOP}.v ${ADDITIONAL_SOURCES}
 # that is why we don't clean it with make clean
 ${CHIPDB}/${DBPART}.bin:
 	${PYPY3} ${NEXTPNR_XILINX_PYTHON_DIR}/bbaexport.py --device ${PART} --bba ${DBPART}.bba
-	bbasm -l ${DBPART}.bba ${CHIPDB}/${DBPART}.bin
+	mkdir -p $(CHIPDB) && bbasm -l ${DBPART}.bba ${CHIPDB}/${DBPART}.bin
 	rm -f ${DBPART}.bba
 
 ${PROJECT}.fasm: ${PROJECT}.json ${CHIPDB}/${DBPART}.bin ${XDC}
