@@ -38,8 +38,7 @@ module blinky (
         .RST(1'b0),
         .CLKFBOUT(feedback),
         .CLKOUT0(pll_clk),
-        // CLKOUT 1-3 are currently unuseable on Kintex due to missing pips
-        // in projxray
+        // CLKOUT 1-3 are currently unuseable on Kintex due to missing pips in prjxray
         //.CLKOUT1(clkout[1]),
         //.CLKOUT2(clkout[2]),
         //.CLKOUT3(clkout[3]),
