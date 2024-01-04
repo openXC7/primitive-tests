@@ -1,0 +1,6 @@
+*.fasm
+*.frames
+*.bit
+*.json
+*.bin
+vivado
