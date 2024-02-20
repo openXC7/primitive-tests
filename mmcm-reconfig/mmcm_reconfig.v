@@ -9,6 +9,7 @@ module mmcm_reconfig (
     wire pll_feedback;
     wire pll_clk;
     wire mmcm_clk;
+    wire locked;
 
     PLLE2_ADV #(
         .CLKFBOUT_MULT(8'd20),
@@ -18,25 +19,30 @@ module mmcm_reconfig (
         .DIVCLK_DIVIDE(1'd1),
         .REF_JITTER1(0.01),
         .STARTUP_WAIT("FALSE")
-    ) PLLE2_ADV (
+    ) pll_inst (
         .CLKFBIN(pll_feedback),
         .CLKIN1(clk),
         .PWRDWN(1'b0),
         .RST(1'b0),
         .CLKFBOUT(pll_feedback),
         .CLKOUT0(pll_clk),
-        .LOCKED()
+        .LOCKED(locked)
     );
 
+    wire reconfig_ready;
+    wire reconfig_done;
+    reg  start_reconfig;
+    reg  [5:0] half_period;
+
     xilinx7_reconfig reconfig (
-        .refclk(clk),
-        .rst(1'b0),
+        .refclk(pll_clk),
+        .rst(~locked),
         .outclk_0(mmcm_clk),
         .locked(),
 
         // CLKOUT0
-        .CLKOUT0_HIGH_TIME  (6'd10),
-        .CLKOUT0_LOW_TIME   (6'd10),
+        .CLKOUT0_HIGH_TIME  (half_period),
+        .CLKOUT0_LOW_TIME   (half_period),
         .CLKOUT0_PHASE_MUX  (3'd0),
         .CLKOUT0_FRAC       (3'd0),
         .CLKOUT0_FRAC_EN    (1'b1),
@@ -63,18 +69,28 @@ module mmcm_reconfig (
         .DIVCLK_NO_COUNT  (1'b1),
 
         // activation
-        .ready(),
-        .start_reconfig(),
-        .reconfig_done()
+        .ready(reconfig_ready),
+        .start_reconfig(start_reconfig),
+        .reconfig_done(reconfig_done)
     );
 
     assign clkout = mmcm_clk;
+    reg [24:0] count   = 0;
+    reg [24:0] r_count = 0;
 
-    reg [24:0] count = 0;
-    always @(posedge(pll_clk)) count <= count + 1;
+    always @(posedge(pll_clk)) begin
+        count <= count + 1;
+
+        if (~locked) half_period <= 6'd10;
+        else if (reconfig_ready & (count == 25'hffffff)) begin
+            half_period <= half_period + 1;
+        end
+
+        start_reconfig <= reconfig_ready & (count == 25'h1000000);
+    end
+
     assign led[0] = count[24];
 
-    reg [24:0] r_count = 0;
     always @(posedge(mmcm_clk)) r_count <= r_count + 1;
     assign led[1] = r_count[24];
 
