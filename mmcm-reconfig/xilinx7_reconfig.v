@@ -338,6 +338,7 @@ end
        next_di               = di;
        next_config_step      = config_step;
        next_remaining_steps  = remaining_steps;
+       reconfig_done         = 1'b0;
 
        case (config_step)
           POWER_REG_STEP     : reg_data = 16'hffff;
@@ -363,7 +364,7 @@ end
              next_state        = WAIT_LOCK;
           end
 
-          // Waits for the MMCM to assert IntLocked - once it does asserts SRDY
+          // Waits for the MMCM to get locked - once it does asserts SRDY
           WAIT_LOCK: begin
              // start up the MMCM
              next_rst_mmcm   = 1'b0;
@@ -443,6 +444,7 @@ end
                    // There are no more registers to write so wait for the MMCM
                    // to lock
                    next_state  = WAIT_LOCK;
+                   reconfig_done = 1'b1;
                 end
              end else begin
                 // Keep waiting for write to complete
