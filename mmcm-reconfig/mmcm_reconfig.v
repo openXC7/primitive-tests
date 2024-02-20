@@ -32,7 +32,40 @@ module mmcm_reconfig (
         .refclk(clk),
         .rst(1'b0),
         .outclk_0(mmcm_clk),
-        .locked()
+        .locked(),
+
+        // CLKOUT0
+        .CLKOUT0_HIGH_TIME  (6'd10),
+        .CLKOUT0_LOW_TIME   (6'd10),
+        .CLKOUT0_PHASE_MUX  (3'd0),
+        .CLKOUT0_FRAC       (3'd0),
+        .CLKOUT0_FRAC_EN    (1'b1),
+        .CLKOUT0_WF_R       (1'b1),
+        .CLKOUT0_EDGE       (1'b0),
+        .CLKOUT0_NO_COUNT   (1'b0),
+        .CLKOUT0_DELAY_TIME (6'b0),
+
+        // CLKFBOUT
+        .CLKFBOUT_HIGH_TIME  (6'd10),
+        .CLKFBOUT_LOW_TIME   (6'd10),
+        .CLKFBOUT_PHASE_MUX  (3'd0),
+        .CLKFBOUT_FRAC       (3'd0),
+        .CLKFBOUT_FRAC_EN    (1'b1),
+        .CLKFBOUT_WF_R       (1'b1),
+        .CLKFBOUT_EDGE       (1'b0),
+        .CLKFBOUT_NO_COUNT   (1'b0),
+        .CLKFBOUT_DELAY_TIME (6'b0),
+
+        // DIVCLK
+        .DIVCLK_HIGH_TIME (6'b1),
+        .DIVCLK_LOW_TIME  (6'b1),
+        .DIVCLK_EDGE      (1'b0),
+        .DIVCLK_NO_COUNT  (1'b1),
+
+        // activation
+        .ready(),
+        .start_reconfig(),
+        .reconfig_done()
     );
 
     assign clkout = mmcm_clk;
