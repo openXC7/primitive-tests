@@ -75,7 +75,7 @@ module pll_reconfig (
     reg  [5:0] half_period;
     wire [3:0] pll2_debug;
 
-    xilinx7_reconfig reconfig (
+    xilinx7_pll_reconfig reconfig (
         .rst(~locked),
         .locked(pll2_locked),
 

@@ -1,5 +1,5 @@
 
-module xilinx7_reconfig (
+module xilinx7_pll_reconfig (
    input  wire rst,
 
    // CLKOUT0

@@ -189,6 +189,7 @@ module xilinx7_reconfig (
    assign divclk = DIVCLK_NO_COUNT ? 0 : DIVCLK_LOW_TIME + DIVCLK_HIGH_TIME - 1;
 
    always @(posedge dclk) begin
+      // This is the table for bandwidth "OPTIMIZED", see xap888
       case (divclk)
          8'd0:  filter <= 10'b0010_1111_00; // 1
          8'd1:  filter <= 10'b0100_1111_00; // 2
