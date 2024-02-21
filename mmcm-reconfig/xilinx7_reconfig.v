@@ -133,7 +133,6 @@ module xilinx7_reconfig (
       .LOCKED    (locked)
    );
 
-   reg        next_ready;
    reg [5:0]  next_rom_addr;
    reg [6:0]  next_daddr;
    reg        next_dwe;
@@ -304,9 +303,6 @@ module xilinx7_reconfig (
       den         <= next_den;
       rst_mmcm    <= next_rst_mmcm;
       din         <= next_din;
-
-      ready       <= next_ready;
-
       config_step     <= next_config_step;
       remaining_steps <= next_remaining_steps;
    end
@@ -320,8 +316,9 @@ module xilinx7_reconfig (
       end
    end
 
+   assign debug = current_state;
+
    always @* begin
-      next_ready            = 1'b0;
       next_dwe              = 1'b0;
       next_den              = 1'b0;
       next_rst_mmcm         = rst_mmcm;
@@ -360,10 +357,25 @@ module xilinx7_reconfig (
          FILT_REG2_STEP     : reg_data = { filter[5], 2'b00, filter[4:3], 2'b00, filter[2:1], 2'b00, filter[0], 4'h0 };
          default            : reg_data = 16'd0;
       endcase
+      case (config_step)
+         POWER_REG_STEP:      next_daddr = POWER_REG;
+         CLKOUT0_REG1_STEP:   next_daddr = CLKOUT0_REG1;
+         CLKOUT0_REG2_STEP:   next_daddr = CLKOUT0_REG2;
+         DIVCLK_REG_STEP:     next_daddr = DIVCLK_REG;
+         CLKFBOUT_REG1_STEP:  next_daddr = CLKFBOUT_REG1;
+         CLKFBOUT_REG2_STEP:  next_daddr = CLKFBOUT_REG2;
+         LOCK_REG1_STEP:      next_daddr = LOCK_REG1;
+         LOCK_REG2_STEP:      next_daddr = LOCK_REG2;
+         LOCK_REG3_STEP:      next_daddr = LOCK_REG3;
+         FILT_REG1_STEP:      next_daddr = FILT_REG1;
+         FILT_REG2_STEP:      next_daddr = FILT_REG2;
+         default:             next_daddr = 7'd0;
+      endcase
+
+      ready = current_state == WAIT_START;
 
       case (current_state)
          RESTART: begin
-            next_daddr        = 7'h00;
             next_din          = 16'h0000;
             next_config_step  = 6'h00;
             next_rst_mmcm     = 1'b1;
@@ -379,7 +391,6 @@ module xilinx7_reconfig (
 
             if(locked) begin
                next_state  = WAIT_START;
-               next_ready  = 1'b1;
             end else begin
                next_state  = WAIT_LOCK;
             end
@@ -401,22 +412,7 @@ module xilinx7_reconfig (
             next_rst_mmcm  = 1'b1;
             // read enable
             next_den       = 1'b1;
-            // set read address
-            case (config_step)
-               POWER_REG_STEP:      next_daddr = POWER_REG;
-               CLKOUT0_REG1_STEP:   next_daddr = CLKOUT0_REG1;
-               CLKOUT0_REG2_STEP:   next_daddr = CLKOUT0_REG2;
-               DIVCLK_REG_STEP:     next_daddr = DIVCLK_REG;
-               CLKFBOUT_REG1_STEP:  next_daddr = CLKFBOUT_REG1;
-               CLKFBOUT_REG2_STEP:  next_daddr = CLKFBOUT_REG2;
-               LOCK_REG1_STEP:      next_daddr = LOCK_REG1;
-               LOCK_REG2_STEP:      next_daddr = LOCK_REG2;
-               LOCK_REG3_STEP:      next_daddr = LOCK_REG3;
-               FILT_REG1_STEP:      next_daddr = FILT_REG1;
-               FILT_REG2_STEP:      next_daddr = FILT_REG2;
-               default:             next_daddr = 7'd0;
-            endcase
-               // Wait for the data to be ready
+            // Wait for the data to be ready
             next_state     = WAIT_A_DRDY;
          end
 
