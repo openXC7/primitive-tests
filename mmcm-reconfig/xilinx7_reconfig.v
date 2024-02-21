@@ -1,9 +1,6 @@
 
 module xilinx7_reconfig (
-   input  wire refclk,
    input  wire rst,
-   output wire locked,
-   output wire outclk_0,
    output wire [3:0] debug,
 
    // CLKOUT0
@@ -86,6 +83,17 @@ module xilinx7_reconfig (
    input wire       DIVCLK_EDGE,
    input wire       DIVCLK_NO_COUNT,
 
+   // Reconfiguration BUS
+   input  wire        dclk,
+   output reg  [15:0] din,
+   output reg  [6:0]  daddr,
+   input  wire [15:0] dout,
+   output reg         den,
+   output reg         dwe,
+   output reg         rst_mmcm,
+   input  wire        drdy,
+   input  wire        locked,
+
    // activation
    output reg  ready,
    input  wire start_reconfig,
@@ -158,45 +166,6 @@ module xilinx7_reconfig (
    reg [3:0] current_state = RESTART;
    reg [3:0] next_state    = RESTART;
 
-   wire        dclk;
-   reg  [15:0] din;
-   reg  [6:0]  daddr;
-   wire [15:0] dout;
-   reg         den;
-   reg         dwe;
-   reg         rst_mmcm;
-   wire        drdy;
-
-   wire mmcm_feedback;
-   MMCME2_ADV #(
-      .BANDWIDTH("OPTIMIZED"),
-      .COMPENSATION("ZHOLD"),
-      .CLKFBOUT_MULT_F(20.625),
-      .CLKIN1_PERIOD(20.0),
-      .CLKOUT0_DIVIDE_F(20.875),
-      .CLKOUT0_PHASE(1'd0),
-      .DIVCLK_DIVIDE(1'd1),
-      .REF_JITTER1(0.01)
-   ) mmcm_inst (
-      .CLKFBIN   (mmcm_feedback),
-      .CLKIN1    (refclk),
-      .PSDONE    (),
-      .PSCLK     (1'b0),
-      .PSEN      (1'b0),
-      .PSINCDEC  (1'b0),
-      .PWRDWN    (1'b0),
-      .RST       (rst_mmcm),
-      .CLKFBOUT  (mmcm_feedback),
-      .CLKOUT0   (outclk_0),
-      .DO        (dout),
-      .DRDY      (drdy),
-      .DADDR     (daddr),
-      .DCLK      (dclk),
-      .DEN       (den),
-      .DI        (din),
-      .DWE       (dwe),
-      .LOCKED    (locked)
-   );
 
    reg [5:0]  next_rom_addr;
    reg [6:0]  next_daddr;
@@ -204,8 +173,6 @@ module xilinx7_reconfig (
    reg        next_den;
    reg        next_rst_mmcm;
    reg [15:0] next_din;
-
-   assign dclk = refclk;
 
    // number of configuration steps
    reg  [4:0]  config_step          = 0;

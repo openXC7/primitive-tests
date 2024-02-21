@@ -30,17 +30,59 @@ module mmcm_reconfig (
         .LOCKED(locked)
     );
 
+
+    // reconfiguration bus
+    wire        dclk;
+    wire [15:0] din;
+    wire [6:0]  daddr;
+    wire [15:0] dout;
+    wire        den;
+    wire        dwe;
+    wire        rst_mmcm;
+    wire        drdy;
+
+    assign dclk = pll_clk;
+
+    wire mmcm_feedback;
+    wire mmcm_locked;
+    MMCME2_ADV #(
+       .BANDWIDTH("OPTIMIZED"),
+       .COMPENSATION("ZHOLD"),
+       .CLKFBOUT_MULT_F(20.625),
+       .CLKIN1_PERIOD(20.0),
+       .CLKOUT0_DIVIDE_F(20.875),
+       .CLKOUT0_PHASE(1'd0),
+       .DIVCLK_DIVIDE(1'd1),
+       .REF_JITTER1(0.01)
+    ) mmcm_inst (
+       .CLKFBIN   (mmcm_feedback),
+       .CLKIN1    (clk),
+       .PSDONE    (),
+       .PSCLK     (1'b0),
+       .PSEN      (1'b0),
+       .PSINCDEC  (1'b0),
+       .PWRDWN    (1'b0),
+       .RST       (rst_mmcm),
+       .CLKFBOUT  (mmcm_feedback),
+       .CLKOUT0   (clkout),
+       .DO        (dout),
+       .DRDY      (drdy),
+       .DADDR     (daddr),
+       .DCLK      (dclk),
+       .DEN       (den),
+       .DI        (din),
+       .DWE       (dwe),
+       .LOCKED    (mmcm_locked)
+    );
+
     wire reconfig_ready;
     wire reconfig_done;
     reg  start_reconfig;
     reg  [5:0] half_period;
-    wire mmcm_locked;
     wire [3:0] mmcm_debug;
 
     xilinx7_reconfig reconfig (
-        .refclk(pll_clk),
         .rst(~locked),
-        .outclk_0(mmcm_clk),
         .locked(mmcm_locked),
         .debug(mmcm_debug),
 
@@ -54,6 +96,13 @@ module mmcm_reconfig (
         .CLKOUT0_EDGE       (1'b0),
         .CLKOUT0_NO_COUNT   (1'b0),
         .CLKOUT0_DELAY_TIME (6'b0),
+
+        .CLKOUT1_NO_COUNT   (1'b1),
+        .CLKOUT2_NO_COUNT   (1'b1),
+        .CLKOUT3_NO_COUNT   (1'b1),
+        .CLKOUT4_NO_COUNT   (1'b1),
+        .CLKOUT5_NO_COUNT   (1'b1),
+        .CLKOUT6_NO_COUNT   (1'b1),
 
         // CLKFBOUT
         .CLKFBOUT_HIGH_TIME  (6'd10),
@@ -71,6 +120,16 @@ module mmcm_reconfig (
         .DIVCLK_LOW_TIME  (6'b1),
         .DIVCLK_EDGE      (1'b0),
         .DIVCLK_NO_COUNT  (1'b1),
+
+        // reconfiguration bus
+        .dclk(dclk),
+        .din(din),
+        .daddr(daddr),
+        .dout(dout),
+        .den(den),
+        .dwe(dwe),
+        .rst_mmcm(rst_mmcm),
+        .drdy(drdy),
 
         // activation
         .ready(reconfig_ready),
