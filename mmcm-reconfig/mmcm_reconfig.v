@@ -3,7 +3,7 @@
 module mmcm_reconfig (
     input  wire       clk,
     output wire [4:0] led,
-    output wire [3:0] debug,
+    output wire [4:0] debug,
     output wire       clkout
     );
 
@@ -56,7 +56,7 @@ module mmcm_reconfig (
        .REF_JITTER1(0.01)
     ) mmcm_inst (
        .CLKFBIN   (mmcm_feedback),
-       .CLKIN1    (clk),
+       .CLKIN1    (pll_clk),
        .PSDONE    (),
        .PSCLK     (1'b0),
        .PSEN      (1'b0),
@@ -154,11 +154,12 @@ module mmcm_reconfig (
 
     assign led[1] = ~r_count[24];
     assign led[2] = ~start_reconfig;
-    assign led[3] = ~mmcm_locked;
+    assign led[3] = ~rst_mmcm;
     assign led[4] = ~reconfig_ready;
     
     assign led[0] = ~count[25];
-    assign debug = mmcm_debug;
+    assign debug[3:0] = mmcm_debug;
+    assign debug[4] = rst_mmcm;
 
     always @(posedge(mmcm_clk)) r_count <= r_count + 1;
 
