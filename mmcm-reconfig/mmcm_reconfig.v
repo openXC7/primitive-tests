@@ -4,7 +4,6 @@ module mmcm_reconfig (
     input  wire       clk,
     input  wire       key,
     output wire [4:0] led,
-    output wire [11:0] debug,
     output wire       clkout
     );
 
@@ -85,7 +84,6 @@ module mmcm_reconfig (
     xilinx7_reconfig reconfig (
         .rst(~locked),
         .locked(mmcm_locked),
-        .debug(mmcm_debug),
 
         // CLKOUT0
         .CLKOUT0_HIGH_TIME  (half_period),
@@ -159,7 +157,6 @@ module mmcm_reconfig (
     assign led[4] = ~reconfig_ready;
     
     assign led[0] = ~count[25];
-    assign debug = din[11:0];
 
     always @(posedge(mmcm_clk)) r_count <= r_count + 1;
 

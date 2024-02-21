@@ -1,7 +1,6 @@
 
 module xilinx7_reconfig (
    input  wire rst,
-   output wire [3:0] debug,
 
    // CLKOUT0
    input wire [5:0] CLKOUT0_HIGH_TIME,
@@ -347,8 +346,6 @@ module xilinx7_reconfig (
          current_state <= next_state;
       end
    end
-
-   assign debug = current_state;
 
    always @* begin
       next_dwe              = 1'b0;
