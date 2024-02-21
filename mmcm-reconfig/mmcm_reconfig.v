@@ -2,7 +2,8 @@
 
 module mmcm_reconfig (
     input  wire       clk,
-    output wire [1:0] led,
+    output wire [4:0] led,
+    output wire [3:0] debug,
     output wire       clkout
     );
 
@@ -33,20 +34,23 @@ module mmcm_reconfig (
     wire reconfig_done;
     reg  start_reconfig;
     reg  [5:0] half_period;
+    wire mmcm_locked;
+    wire [3:0] mmcm_debug;
 
     xilinx7_reconfig reconfig (
         .refclk(pll_clk),
         .rst(~locked),
         .outclk_0(mmcm_clk),
-        .locked(),
+        .locked(mmcm_locked),
+        .debug(mmcm_debug),
 
         // CLKOUT0
         .CLKOUT0_HIGH_TIME  (half_period),
         .CLKOUT0_LOW_TIME   (half_period),
         .CLKOUT0_PHASE_MUX  (3'd0),
         .CLKOUT0_FRAC       (3'd0),
-        .CLKOUT0_FRAC_EN    (1'b1),
-        .CLKOUT0_WF_R       (1'b1),
+        .CLKOUT0_FRAC_EN    (1'b0),
+        .CLKOUT0_WF_R       (1'b0),
         .CLKOUT0_EDGE       (1'b0),
         .CLKOUT0_NO_COUNT   (1'b0),
         .CLKOUT0_DELAY_TIME (6'b0),
@@ -56,8 +60,8 @@ module mmcm_reconfig (
         .CLKFBOUT_LOW_TIME   (6'd10),
         .CLKFBOUT_PHASE_MUX  (3'd0),
         .CLKFBOUT_FRAC       (3'd0),
-        .CLKFBOUT_FRAC_EN    (1'b1),
-        .CLKFBOUT_WF_R       (1'b1),
+        .CLKFBOUT_FRAC_EN    (1'b0),
+        .CLKFBOUT_WF_R       (1'b0),
         .CLKFBOUT_EDGE       (1'b0),
         .CLKFBOUT_NO_COUNT   (1'b0),
         .CLKFBOUT_DELAY_TIME (6'b0),
@@ -75,7 +79,7 @@ module mmcm_reconfig (
     );
 
     assign clkout = mmcm_clk;
-    reg [24:0] count   = 0;
+    reg [25:0] count   = 0;
     reg [24:0] r_count = 0;
 
     always @(posedge(pll_clk)) begin
@@ -86,12 +90,17 @@ module mmcm_reconfig (
             half_period <= half_period + 1;
         end
 
-        start_reconfig <= reconfig_ready & (count == 25'h1000000);
+        start_reconfig <= reconfig_ready & (count == 26'h2000000);
     end
 
-    assign led[0] = count[24];
+    assign led[1] = ~r_count[24];
+    assign led[2] = ~start_reconfig;
+    assign led[3] = ~mmcm_locked;
+    assign led[4] = ~reconfig_ready;
+    
+    assign led[0] = ~count[25];
+    assign debug = mmcm_debug;
 
     always @(posedge(mmcm_clk)) r_count <= r_count + 1;
-    assign led[1] = r_count[24];
 
 endmodule
