@@ -81,7 +81,7 @@ module mmcm_reconfig (
     reg  [5:0] half_period;
     wire [3:0] mmcm_debug;
 
-    xilinx7_reconfig reconfig (
+    xilinx7_mmcm_reconfig reconfig (
         .rst(~locked),
         .locked(mmcm_locked),
 
