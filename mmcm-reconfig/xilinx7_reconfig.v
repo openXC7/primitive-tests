@@ -4,25 +4,78 @@ module xilinx7_reconfig (
    input  wire rst,
    output wire locked,
    output wire outclk_0,
+   output wire [3:0] debug,
 
    // CLKOUT0
    input wire [5:0] CLKOUT0_HIGH_TIME,
    input wire [5:0] CLKOUT0_LOW_TIME,
    input wire [2:0] CLKOUT0_PHASE_MUX,
+   input wire [2:0] CLKOUT0_PHASE_MUX_F,
    input wire [2:0] CLKOUT0_FRAC,
    input wire       CLKOUT0_FRAC_EN,
    input wire       CLKOUT0_WF_R,
+   input wire       CLKOUT0_WF_F,
    input wire       CLKOUT0_EDGE,
    input wire       CLKOUT0_NO_COUNT,
    input wire [5:0] CLKOUT0_DELAY_TIME,
+
+   // CLKOUT1
+   input wire [5:0] CLKOUT1_HIGH_TIME,
+   input wire [5:0] CLKOUT1_LOW_TIME,
+   input wire [2:0] CLKOUT1_PHASE_MUX,
+   input wire       CLKOUT1_EDGE,
+   input wire       CLKOUT1_NO_COUNT,
+   input wire [5:0] CLKOUT1_DELAY_TIME,
+
+   // CLKOUT2
+   input wire [5:0] CLKOUT2_HIGH_TIME,
+   input wire [5:0] CLKOUT2_LOW_TIME,
+   input wire [2:0] CLKOUT2_PHASE_MUX,
+   input wire       CLKOUT2_EDGE,
+   input wire       CLKOUT2_NO_COUNT,
+   input wire [5:0] CLKOUT2_DELAY_TIME,
+
+   // CLKOUT3
+   input wire [5:0] CLKOUT3_HIGH_TIME,
+   input wire [5:0] CLKOUT3_LOW_TIME,
+   input wire [2:0] CLKOUT3_PHASE_MUX,
+   input wire       CLKOUT3_EDGE,
+   input wire       CLKOUT3_NO_COUNT,
+   input wire [5:0] CLKOUT3_DELAY_TIME,
+
+   // CLKOUT4
+   input wire [5:0] CLKOUT4_HIGH_TIME,
+   input wire [5:0] CLKOUT4_LOW_TIME,
+   input wire [2:0] CLKOUT4_PHASE_MUX,
+   input wire       CLKOUT4_EDGE,
+   input wire       CLKOUT4_NO_COUNT,
+   input wire [5:0] CLKOUT4_DELAY_TIME,
+
+   // CLKOUT5
+   input wire [5:0] CLKOUT5_HIGH_TIME,
+   input wire [5:0] CLKOUT5_LOW_TIME,
+   input wire [2:0] CLKOUT5_PHASE_MUX,
+   input wire       CLKOUT5_EDGE,
+   input wire       CLKOUT5_NO_COUNT,
+   input wire [5:0] CLKOUT5_DELAY_TIME,
+
+   // CLKOUT6
+   input wire [5:0] CLKOUT6_HIGH_TIME,
+   input wire [5:0] CLKOUT6_LOW_TIME,
+   input wire [2:0] CLKOUT6_PHASE_MUX,
+   input wire       CLKOUT6_EDGE,
+   input wire       CLKOUT6_NO_COUNT,
+   input wire [5:0] CLKOUT6_DELAY_TIME,
 
    // CLKFBOUT
    input wire [5:0] CLKFBOUT_HIGH_TIME,
    input wire [5:0] CLKFBOUT_LOW_TIME,
    input wire [2:0] CLKFBOUT_PHASE_MUX,
+   input wire [2:0] CLKFBOUT_PHASE_MUX_F,
    input wire [2:0] CLKFBOUT_FRAC,
    input wire       CLKFBOUT_FRAC_EN,
    input wire       CLKFBOUT_WF_R,
+   input wire       CLKFBOUT_WF_F,
    input wire       CLKFBOUT_EDGE,
    input wire       CLKFBOUT_NO_COUNT,
    input wire [5:0] CLKFBOUT_DELAY_TIME,
@@ -52,18 +105,30 @@ module xilinx7_reconfig (
    localparam WAIT_DRDY    = 4'h8;
 
    // configuration step order
-   localparam POWER_REG_STEP     = 4'd0;
-   localparam CLKOUT0_REG1_STEP  = 4'd1;
-   localparam CLKOUT0_REG2_STEP  = 4'd2;
-   localparam DIVCLK_REG_STEP    = 4'd3;
-   localparam CLKFBOUT_REG1_STEP = 4'd4;
-   localparam CLKFBOUT_REG2_STEP = 4'd5;
-   localparam LOCK_REG1_STEP     = 4'd6;
-   localparam LOCK_REG2_STEP     = 4'd7;
-   localparam LOCK_REG3_STEP     = 4'd8;
-   localparam FILT_REG1_STEP     = 4'd9;
-   localparam FILT_REG2_STEP     = 4'd10;
-   localparam CONFIG_STEPS       = 4'd11;
+   localparam POWER_REG_STEP     = 5'd0;
+   localparam CLKOUT0_REG1_STEP  = 5'd1;
+   localparam CLKOUT0_REG2_STEP  = 5'd2;
+   localparam CLKOUT1_REG1_STEP  = 5'd3;
+   localparam CLKOUT1_REG2_STEP  = 5'd4;
+   localparam CLKOUT2_REG1_STEP  = 5'd5;
+   localparam CLKOUT2_REG2_STEP  = 5'd6;
+   localparam CLKOUT3_REG1_STEP  = 5'd7;
+   localparam CLKOUT3_REG2_STEP  = 5'd8;
+   localparam CLKOUT4_REG1_STEP  = 5'd9;
+   localparam CLKOUT4_REG2_STEP  = 5'd10;
+   localparam CLKOUT5_REG1_STEP  = 5'd11;
+   localparam CLKOUT5_REG2_STEP  = 5'd12;
+   localparam CLKOUT6_REG1_STEP  = 5'd13;
+   localparam CLKOUT6_REG2_STEP  = 5'd14;
+   localparam DIVCLK_REG_STEP    = 5'd15;
+   localparam CLKFBOUT_REG1_STEP = 5'd16;
+   localparam CLKFBOUT_REG2_STEP = 5'd17;
+   localparam LOCK_REG1_STEP     = 5'd18;
+   localparam LOCK_REG2_STEP     = 5'd19;
+   localparam LOCK_REG3_STEP     = 5'd20;
+   localparam FILT_REG1_STEP     = 5'd21;
+   localparam FILT_REG2_STEP     = 5'd22;
+   localparam CONFIG_STEPS       = 5'd23;
 
    // register addresses
    localparam CLKOUT5_REG1  = 7'h06;
@@ -155,7 +220,7 @@ module xilinx7_reconfig (
    reg  [39:0] lock;
    reg  [9:0]  filter;
 
-   assign divclk = DIVCLK_LOW_TIME + DIVCLK_HIGH_TIME - 1;
+   assign divclk = DIVCLK_NO_COUNT ? 0 : DIVCLK_LOW_TIME + DIVCLK_HIGH_TIME - 1;
 
    always @(posedge dclk) begin
       case (divclk)
@@ -328,28 +393,55 @@ module xilinx7_reconfig (
       reconfig_done         = 1'b0;
 
       case (config_step)
-      POWER_REG_STEP:      mask = 16'h0000;
-      CLKOUT0_REG1_STEP:   mask = 16'h1000; // CLKOUT0 [15:0]
-      CLKOUT0_REG2_STEP:   mask = 16'h8000; // CLKOUT0 [31:16]
-      DIVCLK_REG_STEP:     mask = 16'hC000;
-      CLKFBOUT_REG1_STEP:  mask = 16'h1000; // CLKFBOUT [15:0]
-      CLKFBOUT_REG2_STEP:  mask = 16'h8000; // CLKFBOUT [31:16]
-      LOCK_REG1_STEP:      mask = 16'hFC00; // { LOCK[29:20] }
-      LOCK_REG2_STEP:      mask = 16'h8000; // { LOCK[34:30], LOCK[9:0] }
-      LOCK_REG3_STEP:      mask = 16'h8000; // { LOCK[39:35], LOCK[19:10] }
-      FILT_REG1_STEP:      mask = 16'h66FF; // { FILT[9],   2'h0,
-                                             //   FILT[8:7], 2'h0, 
-                                             //   FILT[6],   8'h00 }
-      FILT_REG2_STEP:      mask = 16'h666F; // { FILT[5],   2'h0,    
-      default:             mask = 16'h0000;
+         POWER_REG_STEP:      mask = 16'h0000;
+         CLKOUT0_REG1_STEP:   mask = 16'h1000; // CLKOUT0 [15:0]
+         CLKOUT0_REG2_STEP:   mask = 16'h8000; // CLKOUT0 [31:16]
+         CLKOUT1_REG1_STEP:   mask = 16'h1000; // CLKOUT1 [15:0]
+         CLKOUT1_REG2_STEP:   mask = 16'hFC00; // CLKOUT1 [31:16]
+         CLKOUT2_REG1_STEP:   mask = 16'h1000; // CLKOUT2 [15:0]
+         CLKOUT2_REG2_STEP:   mask = 16'hFC00; // CLKOUT2 [31:16]
+         CLKOUT3_REG1_STEP:   mask = 16'h1000; // CLKOUT3 [15:0]
+         CLKOUT3_REG2_STEP:   mask = 16'hFC00; // CLKOUT3 [31:16]
+         CLKOUT4_REG1_STEP:   mask = 16'h1000; // CLKOUT4 [15:0]
+         CLKOUT4_REG2_STEP:   mask = 16'hFC00; // CLKOUT4 [31:16]
+         CLKOUT5_REG1_STEP:   mask = 16'h1000; // CLKOUT5 [15:0]
+         CLKOUT5_REG2_STEP:   mask = 16'hC000; // CLKOUT5 [31:16]
+         CLKOUT6_REG1_STEP:   mask = 16'h1000; // CLKOUT6 [15:0]
+         CLKOUT6_REG2_STEP:   mask = 16'hC000; // CLKOUT6 [31:16]
+         DIVCLK_REG_STEP:     mask = 16'hC000;
+         CLKFBOUT_REG1_STEP:  mask = 16'h1000; // CLKFBOUT [15:0]
+         CLKFBOUT_REG2_STEP:  mask = 16'h8000; // CLKFBOUT [31:16]
+         LOCK_REG1_STEP:      mask = 16'hFC00; // { LOCK[29:20] }
+         LOCK_REG2_STEP:      mask = 16'h8000; // { LOCK[34:30], LOCK[9:0] }
+         LOCK_REG3_STEP:      mask = 16'h8000; // { LOCK[39:35], LOCK[19:10] }
+         FILT_REG1_STEP:      mask = 16'h66FF; // { FILT[9],   2'h0,
+                                                //   FILT[8:7], 2'h0, 
+                                                //   FILT[6],   8'h00 }
+         FILT_REG2_STEP:      mask = 16'h666F; // { FILT[5],   2'h0,    
+         default:             mask = 16'h0000;
       endcase
       case (config_step)
          POWER_REG_STEP     : reg_data = 16'hffff;
-         CLKOUT0_REG1_STEP  : reg_data = { CLKOUT0_PHASE_MUX, 1'b0, CLKOUT0_HIGH_TIME, CLKOUT0_LOW_TIME };
-         CLKOUT0_REG2_STEP  : reg_data = { 1'b0, CLKOUT0_FRAC, CLKOUT0_FRAC_EN, CLKOUT0_WF_R, 2'b00, CLKOUT0_EDGE, CLKOUT0_NO_COUNT, CLKOUT0_DELAY_TIME };
-         DIVCLK_REG_STEP    : reg_data = { 2'b00, DIVCLK_EDGE, DIVCLK_NO_COUNT, DIVCLK_HIGH_TIME, DIVCLK_LOW_TIME };
+         // Reg1
+         CLKOUT0_REG1_STEP  : reg_data = { CLKOUT0_PHASE_MUX,  1'b0, CLKOUT0_HIGH_TIME,  CLKOUT0_LOW_TIME };
+         CLKOUT1_REG1_STEP  : reg_data = { CLKOUT1_PHASE_MUX,  1'b0, CLKOUT1_HIGH_TIME,  CLKOUT1_LOW_TIME };
+         CLKOUT2_REG1_STEP  : reg_data = { CLKOUT2_PHASE_MUX,  1'b0, CLKOUT2_HIGH_TIME,  CLKOUT2_LOW_TIME };
+         CLKOUT3_REG1_STEP  : reg_data = { CLKOUT3_PHASE_MUX,  1'b0, CLKOUT3_HIGH_TIME,  CLKOUT3_LOW_TIME };
+         CLKOUT4_REG1_STEP  : reg_data = { CLKOUT4_PHASE_MUX,  1'b0, CLKOUT4_HIGH_TIME,  CLKOUT4_LOW_TIME };
+         CLKOUT5_REG1_STEP  : reg_data = { CLKOUT5_PHASE_MUX,  1'b0, CLKOUT5_HIGH_TIME,  CLKOUT5_LOW_TIME };
+         CLKOUT6_REG1_STEP  : reg_data = { CLKOUT6_PHASE_MUX,  1'b0, CLKOUT6_HIGH_TIME,  CLKOUT6_LOW_TIME };
          CLKFBOUT_REG1_STEP : reg_data = { CLKFBOUT_PHASE_MUX, 1'b0, CLKFBOUT_HIGH_TIME, CLKFBOUT_LOW_TIME };
+         // Reg2
+         CLKOUT0_REG2_STEP  : reg_data = { 1'b0, CLKOUT0_FRAC,  CLKOUT0_FRAC_EN,  CLKOUT0_WF_R,  2'b00, CLKOUT0_EDGE,  CLKOUT0_NO_COUNT,  CLKOUT0_DELAY_TIME  };
          CLKFBOUT_REG2_STEP : reg_data = { 1'b0, CLKFBOUT_FRAC, CLKFBOUT_FRAC_EN, CLKFBOUT_WF_R, 2'b00, CLKFBOUT_EDGE, CLKFBOUT_NO_COUNT, CLKFBOUT_DELAY_TIME };
+         CLKOUT1_REG2_STEP  : reg_data = { 6'b000000,                                            2'b00, CLKOUT1_EDGE,  CLKOUT1_NO_COUNT,  CLKOUT1_DELAY_TIME  };
+         CLKOUT2_REG2_STEP  : reg_data = { 6'b000000,                                            2'b00, CLKOUT2_EDGE,  CLKOUT2_NO_COUNT,  CLKOUT2_DELAY_TIME  };
+         CLKOUT3_REG2_STEP  : reg_data = { 6'b000000,                                            2'b00, CLKOUT3_EDGE,  CLKOUT3_NO_COUNT,  CLKOUT3_DELAY_TIME  };
+         CLKOUT4_REG2_STEP  : reg_data = { 6'b000000,                                            2'b00, CLKOUT4_EDGE,  CLKOUT4_NO_COUNT,  CLKOUT4_DELAY_TIME  };
+         CLKOUT5_REG2_STEP  : reg_data = { 2'b00, CLKOUT0_PHASE_MUX_F,  CLKOUT0_WF_F,  2'b00,    2'b00, CLKOUT5_EDGE,  CLKOUT5_NO_COUNT,  CLKOUT5_DELAY_TIME  };
+         CLKOUT6_REG2_STEP  : reg_data = { 2'b00, CLKFBOUT_PHASE_MUX_F, CLKFBOUT_WF_F, 2'b00,    2'b00, CLKOUT6_EDGE,  CLKOUT6_NO_COUNT,  CLKOUT6_DELAY_TIME  };
+         // DIVCLK/LOCK/FILT
+         DIVCLK_REG_STEP    : reg_data = { 2'b00, DIVCLK_EDGE, DIVCLK_NO_COUNT, DIVCLK_HIGH_TIME, DIVCLK_LOW_TIME };
          LOCK_REG1_STEP     : reg_data = { 6'b000000, lock[29:20] };
          LOCK_REG2_STEP     : reg_data = { 1'b0, lock[34:30], lock[9:0]   };
          LOCK_REG3_STEP     : reg_data = { 1'b0, lock[39:35], lock[19:10] };
