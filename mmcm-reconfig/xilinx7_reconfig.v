@@ -41,15 +41,15 @@ module xilinx7_reconfig (
    
    // State machine which communicates with the MMCME reconfiguration bus
 
-   localparam RESTART      = 4'h1;
-   localparam WAIT_LOCK    = 4'h2;
-   localparam WAIT_START   = 4'h3;
-   localparam ADDRESS      = 4'h4;
-   localparam WAIT_A_DRDY  = 4'h5;
-   localparam BITMASK      = 4'h6;
-   localparam BITSET       = 4'h7;
-   localparam WRITE        = 4'h8;
-   localparam WAIT_DRDY    = 4'h9;
+   localparam RESTART      = 4'h0;
+   localparam WAIT_LOCK    = 4'h1;
+   localparam WAIT_START   = 4'h2;
+   localparam ADDRESS      = 4'h3;
+   localparam WAIT_A_DRDY  = 4'h4;
+   localparam BITMASK      = 4'h5;
+   localparam BITSET       = 4'h6;
+   localparam WRITE        = 4'h7;
+   localparam WAIT_DRDY    = 4'h8;
 
    // configuration step order
    localparam POWER_REG_STEP     = 4'd0;
