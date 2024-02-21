@@ -4,7 +4,7 @@ module mmcm_reconfig (
     input  wire       clk,
     input  wire       key,
     output wire [4:0] led,
-    output wire [4:0] debug,
+    output wire [11:0] debug,
     output wire       clkout
     );
 
@@ -96,7 +96,7 @@ module mmcm_reconfig (
         .CLKOUT0_WF_R       (1'b0),
         .CLKOUT0_EDGE       (1'b0),
         .CLKOUT0_NO_COUNT   (1'b0),
-        .CLKOUT0_DELAY_TIME (6'b0),
+        .CLKOUT0_DELAY_TIME (6'd0),
 
         .CLKOUT1_NO_COUNT   (1'b1),
         .CLKOUT2_NO_COUNT   (1'b1),
@@ -159,8 +159,7 @@ module mmcm_reconfig (
     assign led[4] = ~reconfig_ready;
     
     assign led[0] = ~count[25];
-    assign debug[3:0] = mmcm_debug;
-    assign debug[4] = rst_mmcm;
+    assign debug = din[11:0];
 
     always @(posedge(mmcm_clk)) r_count <= r_count + 1;
 

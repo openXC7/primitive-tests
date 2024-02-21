@@ -507,7 +507,6 @@ module xilinx7_reconfig (
          BITSET: begin
             // Set the bits that need to be assigned
             next_din          = reg_data | din;
-            next_config_step  = config_step + 1'b1;
             next_state        = WRITE;
          end
 
@@ -516,6 +515,7 @@ module xilinx7_reconfig (
             next_dwe          = 1'b1;
             next_den          = 1'b1;
 
+            next_config_step      = config_step + 1'b1;
             next_remaining_steps  = remaining_steps - 1'b1;
             next_state            = WAIT_DRDY;
          end
