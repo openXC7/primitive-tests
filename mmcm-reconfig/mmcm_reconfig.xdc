@@ -1,6 +1,9 @@
 set_property LOC U22 [get_ports clk]
 set_property IOSTANDARD LVCMOS33 [get_ports {clk}]
 
+set_property LOC P4 [get_ports key]
+set_property IOSTANDARD LVCMOS33 [get_ports {key}]
+
 set_property LOC T23 [get_ports led[0]]
 set_property IOSTANDARD LVCMOS33 [get_ports {led[0]}]
 set_property LOC R23 [get_ports led[1]]

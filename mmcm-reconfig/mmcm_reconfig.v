@@ -2,6 +2,7 @@
 
 module mmcm_reconfig (
     input  wire       clk,
+    input  wire       key,
     output wire [4:0] led,
     output wire [4:0] debug,
     output wire       clkout
@@ -128,7 +129,7 @@ module mmcm_reconfig (
         .dout(dout),
         .den(den),
         .dwe(dwe),
-        .rst_mmcm(rst_mmcm),
+        .rst_mmcm(rst_mmcm | ~key),
         .drdy(drdy),
 
         // activation
