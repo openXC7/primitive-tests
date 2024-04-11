@@ -1,8 +1,8 @@
 PROJECT_NAME = gtp_common
 #PREFIX ?= /snap/openxc7/current/opt/nextpnr-xilinx
-PREFIX=../../../nextpnr-xilinx/xilinx/
+PREFIX=../../../../nextpnr-xilinx/xilinx/
 DB_DIR=${PREFIX}/external/prjxray-db
-CHIPDB=../chipdb
+CHIPDB=../../chipdb
 
 PART = xc7a100tfgg484-1
 DBPART = $(shell echo ${PART} | sed -e 's/-[0-9]//g')
@@ -22,7 +22,7 @@ ${CHIPDB}/${DBPART}.bin:
 #	rm -f ${DBPART}.bba
 
 ${PROJECT_NAME}.fasm: ${PROJECT_NAME}.json ${CHIPDB}/${DBPART}.bin
-	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${PROJECT_NAME}.xdc  --json $< --write ${PROJECT_NAME}_routed.json --fasm $@  --freq 100 --router router1 --debug-router --verbose --debug
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${PROJECT_NAME}.xdc  --json $< --write ${PROJECT_NAME}_routed.json --fasm $@  --freq 100 --verbose --debug
 
 ${PROJECT_NAME}.frames: ${PROJECT_NAME}.fasm
 	fasm2frames --part ${PART} --db-root ${DB_DIR}/artix7 $< > $@

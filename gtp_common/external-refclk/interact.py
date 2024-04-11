@@ -97,6 +97,10 @@ def pr(x):
         print(pr_map(x))
 
 c=ctx.cells['GTPE2_COMMON_0']
+b=ctx.cells['IBUFDS_GTE2_1']
+n=b.ports['O'].net
+n1=c.ports['GTREFCLK1'].net
+pr(n1)
 
 vars = globals().copy()
 vars.update(locals())

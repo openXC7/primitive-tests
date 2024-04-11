@@ -32,7 +32,6 @@ GTPE2_COMMON #(
 	.REFCLKOUTMONITOR0(test_out)
 );
 
-(* keep *)
 IBUFDS_GTE2 IBUFDS_GTE2_0 (
 	.CEB(1'd0),
 	.I(clk_p_0),
@@ -40,7 +39,6 @@ IBUFDS_GTE2 IBUFDS_GTE2_0 (
 	.O(gtrefclk0)
 );
 
-(* keep *)
 IBUFDS_GTE2 IBUFDS_GTE2_1 (
 	.CEB(1'd0),
 	.I(clk_p_1),
