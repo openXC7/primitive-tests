@@ -39,12 +39,15 @@ for index, row in table.iterrows():
     wire = row["Site Wire"]
     belpin['dir'] = dir
     belpin['wire'] = wire
-    pin = pins.get(name)
-    if pin is None:
-        pin = pins[name] = {}
-    pin['primary'] = name
-    pin['wire'] = wire
-    pin['dir'] = dir
+
+    if bel_name == primitive_name:
+        pin = pins.get(name)
+        if pin is None:
+            pin = pins[name] = {}
+        pin['primary'] = name
+        pin['wire'] = wire.replace("INV_OUT", "")
+        pin['dir'] = dir
+
     if is_inv and name != "OUT":
         pip = {}
         pip['bel'] = bel_name
