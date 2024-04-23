@@ -4,7 +4,7 @@ PREFIX=../../../nextpnr-xilinx/xilinx/
 DB_DIR=${PREFIX}/external/prjxray-db
 CHIPDB=../chipdb
 
-PART = xc7a100tfgg484-1
+PART = xc7a35tfgg484-2
 DBPART = $(shell echo ${PART} | sed -e 's/-[0-9]//g')
 SPEEDGRADE = $(shell echo ${PART} | sed -e 's/.*\-\([0-9]\)/\1/g')
 

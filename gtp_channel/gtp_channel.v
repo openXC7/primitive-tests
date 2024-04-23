@@ -1,29 +1,27 @@
 module gtp_channel (
-    input  wire          clk200_n,
-    (* dont_touch = "true" *)
-    input  wire          clk200_p,
-    input  wire 		 refclk_p_0,
-    input  wire 		 refclk_n_0,
-    output wire          clkout0,
+    input  wire          clk,
+    input  wire 		 refclk_p,
+    input  wire 		 refclk_n,
     input  wire          pcie_rx_n,
     input  wire          pcie_rx_p,
     output wire          pcie_tx_n,
-    output wire          pcie_tx_p
-    //, output wire          user_led0,
-    //output wire          user_led1
+    output wire          pcie_tx_p,
+    output wire          user_led0,
+    output wire          user_led1
 );
 
 wire gtrefclk0;
-IBUFDS_GTE2 IBUFDS_GTE2_0 (
+IBUFDS_GTE2 refclk_buffer (
 	.CEB(1'd0),
-	.I (refclk_p_0),
-	.IB(refclk_n_0),
+	.I (refclk_p),
+	.IB(refclk_n),
 	.O(gtrefclk0)
 );
 
 wire gpll_lock;
 wire gpll_clk;
 wire gpll_refclk;
+wire refclk_monitor;
 
 (* keep *)
 GTPE2_COMMON #(
@@ -33,11 +31,12 @@ GTPE2_COMMON #(
 	.PLL1_FBDIV(3'd1),
 	.PLL1_FBDIV_45(3'd5),
 	.PLL1_REFCLK_DIV(2'd2)
-) GTPE2_COMMON_0 (
+) gtp_pll (
 	.BGBYPASSB(1'd1),
 	.BGPDB(1'd1),
 	.BGRCALOVRD(5'd31),
 	.GTREFCLK0(gtrefclk0),
+	.REFCLKOUTMONITOR1(refclk_monitor),
 	.PLL0LOCKEN(1'd1),
 	.PLL0PD(1'd0),
 	.PLL0REFCLKSEL(1'd1),
@@ -59,6 +58,13 @@ reg  [19:0] gtp_txdata = 20'd0;
 wire [19:0] gtp_rxdata;
 reg         gtp_tx_init_txuserrdy0 = 1'd0;
 reg         gtp_tx_init_txuserrdy1 = 1'd0;
+
+reg [24:0] counter;
+always @(posedge refclk_monitor) begin
+	counter <= counter + 1;
+end
+
+assign user_led0 = counter[24];
 
 GTPE2_CHANNEL #(
 	// Parameters.
