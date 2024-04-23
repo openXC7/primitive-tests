@@ -10,12 +10,12 @@ module gtp_channel (
     output wire          user_led1
 );
 
-wire gtrefclk0;
+wire gtrefclk1;
 IBUFDS_GTE2 refclk_buffer (
 	.CEB(1'd0),
 	.I (refclk_p),
 	.IB(refclk_n),
-	.O(gtrefclk0)
+	.O(gtrefclk1)
 );
 
 wire gpll_lock;
@@ -35,7 +35,7 @@ GTPE2_COMMON #(
 	.BGBYPASSB(1'd1),
 	.BGPDB(1'd1),
 	.BGRCALOVRD(5'd31),
-	.GTREFCLK0(gtrefclk0),
+	.GTREFCLK1(gtrefclk1),
 	.REFCLKOUTMONITOR1(refclk_monitor),
 	.PLL0LOCKEN(1'd1),
 	.PLL0PD(1'd0),
