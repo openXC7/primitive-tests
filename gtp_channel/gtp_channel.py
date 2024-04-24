@@ -6,26 +6,12 @@ import sys
 
 from migen import *
 from litex.gen import *
-from litex_boards.platforms import sqrl_acorn
+from litex_boards.platforms import alientek_davincipro
 from litex.build.generic_platform import *
 from litex.soc.cores.clock import *
 
 from liteiclink.serdes.gtp_7series import GTPQuadPLL, GTP
-
-# IOs ----------------------------------------------------------------------------------------------
-
-_io = [
-    ("clkout", 0, Pins("J6"), IOStandard("LVCMOS33")),
-        # PCIe.
-    ("pcie_tx", 0,
-        Subsignal("p", Pins("B6")),
-        Subsignal("n", Pins("A6")),
-    ),
-    ("pcie_rx", 0,
-        Subsignal("p", Pins("B10")),
-        Subsignal("n", Pins("A10")),
-    ),
-]
+from litex.soc.cores.code_8b10b import K
 
 # CRG ----------------------------------------------------------------------------------------------
 
@@ -34,36 +20,58 @@ class CRG(LiteXModule):
         self.rst    = Signal()
         self.cd_sys = ClockDomain()
 
+        internal_refclk = False
+
         # Clk/Rst.
         # --------
-        clk200 = platform.request("clk200")
+        clk50 = platform.request("clk50")
 
         # PLL.
         # ----
         self.pll = pll = S7PLL()
         self.comb += pll.reset.eq(self.rst)
-        pll.register_clkin(clk200, 200e6)
+        pll.register_clkin(clk50, 50e6)
         pll.create_clkout(self.cd_sys, sys_clk_freq)
 
         # GTP RefClk -------------------------------------------------------------------------------
         self.cd_refclk = ClockDomain()
-        pll.create_clkout(self.cd_refclk, 125e6)
-        platform.add_platform_command("set_property SEVERITY {{Warning}} [get_drc_checks REQP-49]")
+        if internal_refclk:
+            pll.create_clkout(self.cd_refclk, 125e6)
+            platform.add_platform_command("set_property SEVERITY {{Warning}} [get_drc_checks REQP-49]")
+        else:
+            refclk_pads = platform.request("gtp_refclk")
+            self.specials += Instance("IBUFDS_GTE2",
+                i_CEB = 0,
+                i_I   = refclk_pads.p,
+                i_IB  = refclk_pads.n,
+                o_O   = ClockSignal("refclk"),
+            )
 
         # GTP PLL ----------------------------------------------------------------------------------
-        self.gpll = gpll = GTPQuadPLL(self.cd_refclk.clk, 125e6, 0.5e9)
+        self.gpll = gpll = GTPQuadPLL(ClockSignal("refclk"), 125e6, 0.5e9)
         print(gpll)
 
         # GTP --------------------------------------------------------------------------------------
-        tx_pads = platform.request("pcie_tx")
-        rx_pads = platform.request("pcie_rx")
+        pcie_pads = platform.request("pcie_x1")
+        tx_pads = lambda: None
+        tx_pads.p = pcie_pads.tx_p
+        tx_pads.n = pcie_pads.tx_n
+        rx_pads = lambda: None
+        rx_pads.p = pcie_pads.rx_p
+        rx_pads.n = pcie_pads.rx_n
+
         self.serdes0 = serdes0 = GTP(gpll, tx_pads, rx_pads, sys_clk_freq,
             tx_buffer_enable = True,
             rx_buffer_enable = False,
             clock_aligner    = False,
         )
 
-        self.comb += serdes0.tx_produce_square_wave.eq(1)
+        squarewave = False
+
+        if not squarewave:
+            serdes0.add_stream_endpoints()
+            serdes0.add_controls()
+            serdes0.add_clock_cycles()
 
         platform.add_period_constraint(serdes0.cd_tx.clk, 1e9/serdes0.tx_clk_freq)
         platform.add_period_constraint(serdes0.cd_rx.clk, 1e9/serdes0.rx_clk_freq)
@@ -71,18 +79,30 @@ class CRG(LiteXModule):
 
         counter = Signal(32)
         self.sync.tx += counter.eq(counter + 1)
+        if squarewave:
+            self.comb += serdes0.tx_produce_square_wave.eq(1),
+        else:
+            self.comb += [
+                serdes0.sink.valid.eq(1),
+                serdes0.sink.ctrl.eq(0b1),
+                serdes0.sink.data[:8].eq(K(28, 5)),
+                serdes0.sink.data[8:].eq(counter),
+            ]
+
         self.comb += [
-            platform.request("clkout", 0).eq(counter[24]),
             platform.request("user_led", 0).eq(counter[24]),
             platform.request("user_led", 1).eq(gpll.lock),
+            platform.request("user_led", 2).eq(0),
+            platform.request("user_led", 3).eq(0),
         ]
         #self.specials += Instance("BUFG", i_I=ClockSignal("gpll"), o_O=platform.request("clkout", 0))
 
 # Build --------------------------------------------------------------------------------------------
 
 def main():
-    platform = sqrl_acorn.Platform()
-    platform.add_extension(_io)
+    # toolchain = "yosys+nextpnr"
+    toolchain = "vivado"
+    platform = alientek_davincipro.Platform(toolchain=toolchain)
     crg = CRG(platform, 100e6)
     platform.build(crg)
 
