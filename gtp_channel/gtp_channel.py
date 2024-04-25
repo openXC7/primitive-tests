@@ -13,6 +13,17 @@ from litex.soc.cores.clock import *
 from liteiclink.serdes.gtp_7series import GTPQuadPLL, GTP
 from litex.soc.cores.code_8b10b import K
 
+_io = [
+    ("pcie0_tx", 0,
+        Subsignal("p", Pins("D7")),
+        Subsignal("n", Pins("C7"))
+    ),
+    ("pcie0_rx", 0,
+        Subsignal("p", Pins("D9")),
+        Subsignal("n", Pins("C9"))
+    ),
+]
+
 # CRG ----------------------------------------------------------------------------------------------
 
 class CRG(LiteXModule):
@@ -52,13 +63,8 @@ class CRG(LiteXModule):
         print(gpll)
 
         # GTP --------------------------------------------------------------------------------------
-        pcie_pads = platform.request("pcie_x1")
-        tx_pads = lambda: None
-        tx_pads.p = pcie_pads.tx_p
-        tx_pads.n = pcie_pads.tx_n
-        rx_pads = lambda: None
-        rx_pads.p = pcie_pads.rx_p
-        rx_pads.n = pcie_pads.rx_n
+        tx_pads = platform.request("pcie0_tx")
+        rx_pads = platform.request("pcie0_rx")
 
         self.serdes0 = serdes0 = GTP(gpll, tx_pads, rx_pads, sys_clk_freq,
             tx_buffer_enable = True,
@@ -103,6 +109,7 @@ def main():
     # toolchain = "yosys+nextpnr"
     toolchain = "vivado"
     platform = alientek_davincipro.Platform(toolchain=toolchain)
+    platform.add_extension(_io)
     crg = CRG(platform, 100e6)
     platform.build(crg)
 
