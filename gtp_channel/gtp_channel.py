@@ -106,8 +106,8 @@ class CRG(LiteXModule):
 # Build --------------------------------------------------------------------------------------------
 
 def main():
-    # toolchain = "yosys+nextpnr"
-    toolchain = "vivado"
+    toolchain = "openxc7"
+    #toolchain = "vivado"
     platform = alientek_davincipro.Platform(toolchain=toolchain)
     platform.add_extension(_io)
     crg = CRG(platform, 100e6)
