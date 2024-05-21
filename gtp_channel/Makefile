@@ -22,7 +22,7 @@ ${CHIPDB}/${DBPART}.bin:
 #	rm -f ${DBPART}.bba
 
 ${PROJECT_NAME}.fasm: ${PROJECT_NAME}.json ${CHIPDB}/${DBPART}.bin
-	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${PROJECT_NAME}.xdc  --json $< --write ${PROJECT_NAME}_routed.json --fasm $@  --freq 100 --verbose --debug
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${PROJECT_NAME}.xdc  --json $< --write ${PROJECT_NAME}_routed.json --fasm $@  --freq 100 #--verbose --debug
 
 ${PROJECT_NAME}.frames: ${PROJECT_NAME}.fasm
 	fasm2frames --part ${PART} --db-root ${DB_DIR}/artix7 $< > $@
