@@ -25,9 +25,7 @@ _io = [
     ),
 ]
 
-# CRG ----------------------------------------------------------------------------------------------
-
-class CRG(LiteXModule):
+class TestDesign(LiteXModule):
     def __init__(self, platform, sys_clk_freq):
         self.rst    = Signal()
         self.cd_sys = ClockDomain()
@@ -122,7 +120,7 @@ def main():
     #toolchain = "vivado"
     platform = alientek_davincipro.Platform(toolchain=toolchain)
     platform.add_extension(_io)
-    crg = CRG(platform, 100e6)
+    crg = TestDesign(platform, 100e6)
     platform.build(crg)
 
 if __name__ == "__main__":
