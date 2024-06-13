@@ -59,7 +59,7 @@ class TestDesign(LiteXModule):
             )
 
         # GTP PLL ----------------------------------------------------------------------------------
-        self.gpll = gpll = GTPQuadPLL(ClockSignal("refclk"), 125e6, 0.5e9)
+        self.gpll = gpll = GTPQuadPLL(ClockSignal("refclk"), 125e6, 1e9)
         print(gpll)
 
         # GTP --------------------------------------------------------------------------------------
@@ -68,12 +68,12 @@ class TestDesign(LiteXModule):
 
         self.serdes0 = serdes0 = GTP(gpll, tx_pads, rx_pads, sys_clk_freq,
             tx_buffer_enable = True,
-            rx_buffer_enable = True,
+            rx_buffer_enable = False,
             clock_aligner    = False,
         )
 
         squarewave = False
-        loopback = False
+        loopback = True
 
         if not squarewave:
             serdes0.add_stream_endpoints()
@@ -93,7 +93,7 @@ class TestDesign(LiteXModule):
                 serdes0.sink.valid.eq(1),
                 serdes0.sink.ctrl.eq(0b1),
                 serdes0.sink.data[:8].eq(K(28, 5)),
-                serdes0.sink.data[8:].eq(counter),
+                serdes0.sink.data[8:].eq(counter[24:32]),
             ]
 
         leds = Cat([platform.request("user_led", i) for i in range(4)])
@@ -107,11 +107,16 @@ class TestDesign(LiteXModule):
             ]
         else:
             self.comb += [
-                serdes0.loopback.eq(0b001), # near end PMA loopback
+                serdes0.loopback.eq(0b010),
+                serdes0.rx_align.eq(1),
+                If(serdes0.source.data[0:8] == K(28, 5),
+                    leds.eq(serdes0.source.data[8:]),
+                ).Else(
+                    leds.eq(serdes0.source.data[0:]),
+                ),
                 serdes0.source.ready.eq(1),
-                leds.eq(serdes0.source.data[:4])
             ]
-        #self.specials += Instance("BUFG", i_I=ClockSignal("gpll"), o_O=platform.request("clkout", 0))
+        #self.specials += Instance("BUFG", i_I=ClockSignal("tx"), o_O=platform.request("clkout", 0))
 
 # Build --------------------------------------------------------------------------------------------
 
