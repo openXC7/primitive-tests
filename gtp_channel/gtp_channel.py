@@ -8,6 +8,7 @@ from migen import *
 from litex.gen import *
 from litex_boards.platforms import alientek_davincipro
 from litex.build.generic_platform import *
+from litex.build.xilinx.vivado import XilinxVivadoToolchain
 from litex.soc.cores.clock import *
 
 from liteiclink.serdes.gtp_7series import GTPQuadPLL, GTP
@@ -31,7 +32,7 @@ class CRG(LiteXModule):
         self.rst    = Signal()
         self.cd_sys = ClockDomain()
 
-        internal_refclk = False
+        internal_refclk = True
 
         # Clk/Rst.
         # --------
@@ -48,7 +49,8 @@ class CRG(LiteXModule):
         self.cd_refclk = ClockDomain()
         if internal_refclk:
             pll.create_clkout(self.cd_refclk, 125e6)
-            platform.add_platform_command("set_property SEVERITY {{Warning}} [get_drc_checks REQP-49]")
+            if isinstance(platform.toolchain, XilinxVivadoToolchain):
+                platform.add_platform_command("set_property SEVERITY {{Warning}} [get_drc_checks REQP-49]")
         else:
             refclk_pads = platform.request("gtp_refclk")
             self.specials += Instance("IBUFDS_GTE2",
@@ -68,11 +70,12 @@ class CRG(LiteXModule):
 
         self.serdes0 = serdes0 = GTP(gpll, tx_pads, rx_pads, sys_clk_freq,
             tx_buffer_enable = True,
-            rx_buffer_enable = False,
+            rx_buffer_enable = True,
             clock_aligner    = False,
         )
 
         squarewave = False
+        loopback = False
 
         if not squarewave:
             serdes0.add_stream_endpoints()
@@ -95,12 +98,21 @@ class CRG(LiteXModule):
                 serdes0.sink.data[8:].eq(counter),
             ]
 
-        self.comb += [
-            platform.request("user_led", 0).eq(counter[24]),
-            platform.request("user_led", 1).eq(gpll.lock),
-            platform.request("user_led", 2).eq(0),
-            platform.request("user_led", 3).eq(0),
-        ]
+        leds = Cat([platform.request("user_led", i) for i in range(4)])
+
+        if not loopback:
+            self.comb += [
+                leds[0].eq(counter[24]),
+                leds[1].eq(gpll.lock),
+                leds[2].eq(0),
+                leds[3].eq(0),
+            ]
+        else:
+            self.comb += [
+                serdes0.loopback.eq(0b001), # near end PMA loopback
+                serdes0.source.ready.eq(1),
+                leds.eq(serdes0.source.data[:4])
+            ]
         #self.specials += Instance("BUFG", i_I=ClockSignal("gpll"), o_O=platform.request("clkout", 0))
 
 # Build --------------------------------------------------------------------------------------------
