@@ -74,6 +74,7 @@ class TestDesign(LiteXModule):
 
         squarewave = False
         loopback = True
+        slow_counter = True
 
         if not squarewave:
             serdes0.add_stream_endpoints()
@@ -93,7 +94,7 @@ class TestDesign(LiteXModule):
                 serdes0.sink.valid.eq(1),
                 serdes0.sink.ctrl.eq(0b1),
                 serdes0.sink.data[:8].eq(K(28, 5)),
-                serdes0.sink.data[8:].eq(counter[24:32]),
+                serdes0.sink.data[8:].eq(counter[24:32] if slow_counter else counter),
             ]
 
         leds = Cat([platform.request("user_led", i) for i in range(4)])
