@@ -10,6 +10,7 @@ PYPY3 ?= pypy3
 
 TOP ?= ${PROJECT}
 TOP_MODULE ?= ${TOP}
+TOP_SOURCE ?= ${TOP}.v
 
 PNR_DEBUG ?= # --verbose --debug
 
@@ -25,7 +26,7 @@ all: ${PROJECT}.bit
 program: ${PROJECT}.bit
 	openFPGALoader ${JTAG_LINK} --bitstream $<
 
-${PROJECT}.json: ${TOP}.v ${ADDITIONAL_SOURCES}
+${PROJECT}.json: ${TOP_SOURCE} ${ADDITIONAL_SOURCES}
 	yosys ${YOSYS_OPTS} -p "synth_xilinx -flatten -abc9 ${SYNTH_OPTS} -arch xc7 -top ${TOP_MODULE}; write_json ${PROJECT}.json" $< ${ADDITIONAL_SOURCES}
 
 # The chip database only needs to be generated once
