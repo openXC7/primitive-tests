@@ -36,8 +36,14 @@ ${CHIPDB}/${DBPART}.bin:
 	mkdir -p $(CHIPDB) && bbasm -l ${DBPART}.bba ${CHIPDB}/${DBPART}.bin
 	rm -f ${DBPART}.bba
 
-${PROJECT}.fasm: ${PROJECT}.json ${CHIPDB}/${DBPART}.bin ${XDC}
-	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --json ${PROJECT}.json --fasm $@ ${PNR_ARGS} ${PNR_DEBUG}
+${PROJECT}.pack.json: ${PROJECT}.json ${CHIPDB}/${DBPART}.bin ${XDC}
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --pack-only --json ${PROJECT}.json --write $@ ${PNR_ARGS} ${PNR_DEBUG}
+
+${PROJECT}.place.json: ${PROJECT}.pack.json
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --no-pack --no-route --json $< --write $@ ${PNR_ARGS} ${PNR_DEBUG}
+
+${PROJECT}.fasm: ${PROJECT}.place.json
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --no-pack --no-place --json $< --fasm $@ --write ${PROJECT}.route.json ${PNR_ARGS} ${PNR_DEBUG}
 	
 ${PROJECT}.frames: ${PROJECT}.fasm
 	fasm2frames --part ${PART} --db-root ${PRJXRAY_DB_DIR}/${FAMILY} $< > $@
