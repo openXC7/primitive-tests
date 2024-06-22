@@ -111,7 +111,7 @@ Open On-Chip Debugger
 [`setup.cfg`](./setup.cfg) defines the following commands for reading from or writing to LUTRAM:
 
 - `read_lutram <address>` : read data in hex from LUTRAM at `address`
-- `read_lutram_range <start_address> <count>` : read data in hex from LUTRAM starting from `start` to `start + count` (exclusive)
+- `read_lutram_range <start> <count>` : read data in hex from LUTRAM starting from `start` to `start + count` (exclusive)
 - `write_lutram <address> <data>` : write `data` to LUTRAM at `address`
 
 ## License
