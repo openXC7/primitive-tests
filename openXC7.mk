@@ -10,6 +10,7 @@ PYPY3 ?= pypy3
 
 TOP ?= ${PROJECT}
 TOP_MODULE ?= ${TOP}
+TOP_SOURCE ?= ${TOP}.v
 
 PNR_DEBUG ?= # --verbose --debug
 
@@ -25,18 +26,24 @@ all: ${PROJECT}.bit
 program: ${PROJECT}.bit
 	openFPGALoader ${JTAG_LINK} --bitstream $<
 
-${PROJECT}.json: ${TOP}.v ${ADDITIONAL_SOURCES}
-	yosys -p "synth_xilinx -flatten -abc9 ${SYNTH_OPTS} -arch xc7 -top ${TOP_MODULE}; write_json ${PROJECT}.json" $< ${ADDITIONAL_SOURCES}
+${PROJECT}.json: ${TOP_SOURCE} ${ADDITIONAL_SOURCES}
+	yosys ${YOSYS_OPTS} -p "synth_xilinx -flatten -abc9 ${SYNTH_OPTS} -arch xc7 -top ${TOP_MODULE}; write_json ${PROJECT}.json" $< ${ADDITIONAL_SOURCES}
 
 # The chip database only needs to be generated once
 # that is why we don't clean it with make clean
 ${CHIPDB}/${DBPART}.bin:
 	${PYPY3} ${NEXTPNR_XILINX_PYTHON_DIR}/bbaexport.py --device ${PART} --bba ${DBPART}.bba
-	bbasm -l ${DBPART}.bba ${CHIPDB}/${DBPART}.bin
+	mkdir -p $(CHIPDB) && bbasm -l ${DBPART}.bba ${CHIPDB}/${DBPART}.bin
 	rm -f ${DBPART}.bba
 
-${PROJECT}.fasm: ${PROJECT}.json ${CHIPDB}/${DBPART}.bin ${XDC}
-	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --json ${PROJECT}.json --fasm $@ ${PNR_ARGS} ${PNR_DEBUG}
+${PROJECT}.pack.json: ${PROJECT}.json ${CHIPDB}/${DBPART}.bin ${XDC}
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --pack-only --json ${PROJECT}.json --write $@ ${PNR_ARGS} ${PNR_DEBUG}
+
+${PROJECT}.place.json: ${PROJECT}.pack.json
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --no-pack --no-route --json $< --write $@ ${PNR_ARGS} ${PNR_DEBUG}
+
+${PROJECT}.fasm: ${PROJECT}.place.json
+	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${XDC} --no-pack --no-place --json $< --fasm $@ --write ${PROJECT}.route.json ${PNR_ARGS} ${PNR_DEBUG}
 	
 ${PROJECT}.frames: ${PROJECT}.fasm
 	fasm2frames --part ${PART} --db-root ${PRJXRAY_DB_DIR}/${FAMILY} $< > $@
