@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Hansem Ro
+// Copyright (c) 2024 openXC7
 // SPDX-License-Identifier: BSD-3-Clause
 
 // XC7 LUTRAM Functional Test over JTAG
