@@ -9,7 +9,7 @@ XDC    ?= empty.xdc
 endif
 # See openFPGALoader --list-cables for supported cables
 JTAG_CABLE ?= digilent_hs2
-JTAG_LINK = -b ${BOARD} -c ${JTAG_CABLE}
+JTAG_LINK ?= -b ${BOARD} -c ${JTAG_CABLE}
 
 # Project Parameters
 PROJECT = top
@@ -52,7 +52,3 @@ ifeq (${JTAG_CABLE},ft2232)
 endif
 endif
 endif
-
-.PHONY: test
-test:
-	echo ${YOSYS_OPTS}
