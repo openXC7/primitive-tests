@@ -269,10 +269,10 @@
 `endif
     RAM32M #(
         .IS_WCLK_INVERTED(1'b0),
-        .INIT_A(INIT[31:0]),
-        .INIT_B(INIT[63:32]),
-        .INIT_C(INIT[95:64]),
-        .INIT_D(INIT[127:96])
+        .INIT_D(INIT[63:0]),
+        .INIT_C(INIT[127:64]),
+        .INIT_B(INIT[191:128]),
+        .INIT_A(INIT[255:192])
     ) ram32m (
         .WCLK(jtag_drck),
         .WE(lutram_we),
@@ -298,10 +298,10 @@
 `endif
     RAM64M #(
         .IS_WCLK_INVERTED(1'b0),
-        .INIT_A(INIT[63:0]),
-        .INIT_B(INIT[127:64]),
-        .INIT_C(INIT[191:128]),
-        .INIT_D(INIT[255:192])
+        .INIT_D(INIT[63:0]),
+        .INIT_C(INIT[127:64]),
+        .INIT_B(INIT[191:128]),
+        .INIT_A(INIT[255:192])
     ) ram64m (
         .WCLK(jtag_drck),
         .WE(lutram_we),
