@@ -12,7 +12,6 @@ This test is intended to validate functional aspects of LUT_OR_MEM BELs over JTA
 
 - [ ] Generate test input vectors (as openocd commands)
 - [ ] Generate expected output given type of LUTRAM and test input
-- [ ] Provide Vivado build scripts
 
 ## Default FPGA Target
 
@@ -40,17 +39,41 @@ make FAMILY=kintex7 PART=xc7k325tffg900-2 BOARD=kc705 JTAG_CABLE=digilent ...
 
 ### Using Vivado Toolchain
 
-TODO
+> [!NOTE]
+> Append make flag `DEBUG_LEDS=1` to enable optional debug LED status indicators.
+
+To generate the bitstream with a specified LUTRAM cell using the Vivado toolchain, run the following:
+
+```
+make [PART=...] [XDC=...] LUTRAM=<LUTRAM_TYPE> clean top.vivado.bit
+```
+
+Available `LUTRAM_TYPE` options:
+
+- Supported by Vivado:
+    - RAMS32
+    - RAMD32
+    - RAMS64E
+    - RAMD64E
+    - RAM32X1S
+    - RAM64X1S
+    - RAM128X1S
+    - RAM256X1S
+    - RAM32X1D
+    - RAM64X1D
+    - RAM128X1D
+    - RAM32M
+    - RAM64M
 
 ### Using OpenXC7 Toolchain
 
 > [!NOTE]
 > Append make flag `DEBUG_LEDS=1` to enable optional debug LED status indicators.
 
-To generate the bitstream with a specified LUTRAM cell using OpenXC7 toolchain, run the following:
+To generate the bitstream with a specified LUTRAM cell using the OpenXC7 toolchain, run the following:
 
 ```
-make [FAMILY=...] [PART=...] LUTRAM=<LUTRAM_TYPE> clean top.bit
+make [FAMILY=...] [PART=...] [XDC=...] LUTRAM=<LUTRAM_TYPE> clean top.bit
 ```
 
 Available `LUTRAM_TYPE` options:
