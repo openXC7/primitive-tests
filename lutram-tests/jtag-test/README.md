@@ -12,6 +12,7 @@ This test is intended to validate functional aspects of LUT_OR_MEM BELs over JTA
 
 - [ ] Generate test input vectors (as openocd commands)
 - [ ] Generate expected output given type of LUTRAM and test input
+- [ ] Generate INIT pattern
 
 ## Default FPGA Target
 
@@ -142,6 +143,32 @@ Open On-Chip Debugger
 - `read_lutram <address>` : read and return data in hex from LUTRAM at `address`
 - `read_lutram_range <start> <count>` : read data in hex from LUTRAM starting from `start` to `start + count` (exclusive); return list of data values
 - `write_lutram <address> <data>` : write `data` to LUTRAM at `address`
+
+## Testing LUTRAM INIT with OpenOCD
+
+First build and program FPGA target with LUTRAM to test.
+
+To test if LUTRAM is initialized correctly, run the following:
+
+```
+openocd -f interface/ADAPTER.cfg -f ./tests.cfg -c "print_test_result [test_<LUTRAM_TYPE>_init]" -c "shutdown"
+```
+
+Available `LUTRAM_TYPE` options:
+
+- RAMS32
+- RAMD32
+- RAMS64E
+- RAMD64E
+- RAM32X1S
+- RAM64X1S
+- RAM128X1S
+- RAM256X1S
+- RAM32X1D
+- RAM64X1D
+- RAM128X1D
+- RAM32M
+- RAM64M
 
 ## License
 
