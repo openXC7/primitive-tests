@@ -46,7 +46,7 @@ make FAMILY=kintex7 PART=xc7k325tffg900-2 BOARD=kc705 JTAG_CABLE=digilent ...
 To generate the bitstream with a specified LUTRAM cell using the Vivado toolchain, run the following:
 
 ```
-make [PART=...] [XDC=...] LUTRAM=<LUTRAM_TYPE> clean top.vivado.bit
+make [PART=...] [XDC=...] LUTRAM=<LUTRAM_TYPE> vivadoclean top.vivado.bit
 ```
 
 Available `LUTRAM_TYPE` options:
