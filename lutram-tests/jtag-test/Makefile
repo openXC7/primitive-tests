@@ -15,16 +15,19 @@ JTAG_LINK ?= -b ${BOARD} -c ${JTAG_CABLE}
 PROJECT = top
 LUTRAM ?= RAM32X1D
 YOSYS_OPTS = -DTEST_${LUTRAM}
+VIVADO_SYNTH_OPTS = -verilog_define TEST_${LUTRAM}
 ifneq (${DEBUG_LEDS},)
 YOSYS_OPTS += -DDEBUG_LEDS
+VIVADO_SYNTH_OPTS += -verilog_define DEBUG_LEDS
 endif
 
 CHIPDB ?= ../../chipdb
 include ../../openXC7.mk
+include ./vivado.mk
 
 ifeq (${BOARD},acornCle215)
 # openFPGALoader was unable to configure CLE215(+), so using openocd instead...
-program: ${PROJECT}.bit
+program: ${BITSTREAM}
 ifeq (${JTAG_CABLE},digilent_hs2)
 	openocd -c "adapter driver ftdi" \
 		-c "ftdi vid_pid 0x0403 0x6014" \
