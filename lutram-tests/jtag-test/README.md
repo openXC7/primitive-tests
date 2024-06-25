@@ -103,10 +103,16 @@ Available `LUTRAM_TYPE` options:
 >
 > See the [Makefile](./Makefile) and [openXC7.mk](../../openXC7.mk) for more information.
 
-To load the bitstream onto the target, run the following:
+To load the bitstream built with openXC7 onto the target, run the following:
 
 ```
 make [BOARD=...] [JTAG_CABLE=...] program
+```
+
+To load the bitstream built with vivado onto the target, run the following:
+
+```
+make [BOARD=...] [JTAG_CABLE=...] BITSTREAM=top.vivado.bit program
 ```
 
 ## Read/Write LUTRAM with OpenOCD
