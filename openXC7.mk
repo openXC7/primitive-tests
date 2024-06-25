@@ -18,12 +18,13 @@ BOARD ?= UNKNOWN
 JTAG_LINK ?= --board ${BOARD}
 
 XDC ?= ${PROJECT}.xdc
+BITSTREAM ?= ${PROJECT}.bit
 
 .PHONY: all
 all: ${PROJECT}.bit
 
 .PHONY: program
-program: ${PROJECT}.bit
+program: ${BITSTREAM}
 	openFPGALoader ${JTAG_LINK} --bitstream $<
 
 ${PROJECT}.json: ${TOP_SOURCE} ${ADDITIONAL_SOURCES}
