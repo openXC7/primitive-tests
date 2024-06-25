@@ -27,7 +27,7 @@ include ./vivado.mk
 
 ifeq (${BOARD},acornCle215)
 # openFPGALoader was unable to configure CLE215(+), so using openocd instead...
-program: ${PROJECT}.bit
+program: ${BITSTREAM}
 ifeq (${JTAG_CABLE},digilent_hs2)
 	openocd -c "adapter driver ftdi" \
 		-c "ftdi vid_pid 0x0403 0x6014" \
