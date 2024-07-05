@@ -5,7 +5,7 @@
 
 `default_nettype none
 
-// TODO: generate 256-bit INIT pattern
+`include "lutram_init.vh"
 `ifndef LUTRAM_INIT
 `define LUTRAM_INIT 256'hDEADBEEF_0150BAD0_CAFEF00D_0F0FFFFF_01234567_89ABCDEF_FEDCBA98_76543210
 `endif

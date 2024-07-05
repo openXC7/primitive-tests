@@ -95,6 +95,12 @@ Available `LUTRAM_TYPE` options:
     - RAM128X1S
     - RAM256X1S
 
+## Generating 256-bit INIT Pattern
+
+1. Run `generate_init.sh` to generate `lutram_init.vh` and `init.cfg` with a random 256-bit INIT pattern.
+
+2. [Regenerate the bitstream](#SelectingLutramAndGeneratingTheBitstream).
+
 ## Programming the Target
 
 > [!NOTE]
