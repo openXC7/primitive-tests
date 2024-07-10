@@ -10,9 +10,8 @@ This test is intended to validate functional aspects of LUT_OR_MEM BELs over JTA
 
 ## Tasks
 
-- [ ] Generate test input vectors (as openocd commands)
-- [ ] Generate expected output given type of LUTRAM and test input
-- [ ] Generate INIT pattern
+- [ ] Add LUT primitives
+- [ ] Add LUTROM primitives
 
 ## Default FPGA Target
 
