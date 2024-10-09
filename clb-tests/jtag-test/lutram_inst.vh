@@ -63,18 +63,12 @@
         .O(lutram_do[0]),
         .WADR7(lutram_addr[7]),
         .WADR6(lutram_addr[6]),
-        .WADR5(lutram_addr[5]),
-        .WADR4(lutram_addr[4]),
-        .WADR3(lutram_addr[3]),
-        .WADR2(lutram_addr[2]),
-        .WADR1(lutram_addr[1]),
-        .WADR0(lutram_addr[0]),
-        .RADR5(lutram_addr[5]),
-        .RADR4(lutram_addr[4]),
-        .RADR3(lutram_addr[3]),
-        .RADR2(lutram_addr[2]),
-        .RADR1(lutram_addr[1]),
-        .RADR0(lutram_addr[0])
+        .ADR5(lutram_addr[5]),
+        .ADR4(lutram_addr[4]),
+        .ADR3(lutram_addr[3]),
+        .ADR2(lutram_addr[2]),
+        .ADR1(lutram_addr[1]),
+        .ADR0(lutram_addr[0])
     );
 `elsif TEST_RAMD64E
     localparam integer NUM_OUTPUT = 1;
