@@ -132,7 +132,7 @@ To load the bitstream built with vivado onto the target, run the following:
 make [BOARD=...] [JTAG_CABLE=...] BITSTREAM=top.vivado.bit program
 ```
 
-## Read/Write LUTRAM with OpenOCD
+## Read/Write LUTRAM/SRL with OpenOCD
 
 Start OpenOCD session with an interface script (such as [`digilent-hs2.cfg`](./digilent-hs2.cfg))
 and [`setup.cfg`](./setup.cfg) loaded:
@@ -154,11 +154,12 @@ Open On-Chip Debugger
 >
 ```
 
-[`setup.cfg`](./setup.cfg) defines the following commands for reading from or writing to LUTRAM:
+[`setup.cfg`](./setup.cfg) defines the following commands for reading from or writing to LUTRAM/SRL:
 
 - `read_lutram <address>` : read and return data in hex from LUTRAM at `address`
-- `read_lutram_range <start> <count>` : read data in hex from LUTRAM starting from `start` to `start + count` (exclusive); return list of data values
+- `read_lutram_range <start> <count>` : read data in hex from LUTRAM starting from `start` to `start + count` (exclusive); returns list of data values from reply register
 - `write_lutram <address> <data>` : write `data` to LUTRAM at `address`
+- `read_write_srl <n> <data>` : shift in and out n-bit data through SRL starting from most significant bit; returns list of data values from reply register
 
 ## Testing LUTRAM INIT with OpenOCD
 
