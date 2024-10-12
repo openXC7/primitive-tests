@@ -172,6 +172,16 @@ openocd -f interface/ADAPTER.cfg -f ./tests.cfg -c "print_test_result [test_<LUT
 
 Available `LUTRAM_TYPE` options:
 
+- LUT5
+- LUT6
+- LUT6_2
+- CFGLUT5
+    - ignores shift register carry output CDO
+- SRL16E
+- SRLC16E
+    - ignores shift register carry output Q15
+- SRLC32E
+    - ignores shift register carry output Q31
 - RAMS32
 - RAMD32
 - RAMS64E
