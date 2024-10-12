@@ -1,5 +1,141 @@
 // Instantiate LUTRAM
-`ifdef TEST_RAMS32
+`ifdef TEST_LUT5
+    localparam integer NUM_OUTPUT = 1;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    LUT5 #(
+        .INIT(INIT[31:0])
+    ) lut5 (
+        .O(lutram_do[0]),
+        .I4(lutram_addr[4]),
+        .I3(lutram_addr[3]),
+        .I2(lutram_addr[2]),
+        .I1(lutram_addr[1]),
+        .I0(lutram_addr[0])
+    );
+`elsif TEST_LUT6
+    localparam integer NUM_OUTPUT = 1;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    LUT6 #(
+        .INIT(INIT[63:0])
+    ) lut6 (
+        .O(lutram_do[0]),
+        .I5(lutram_addr[5]),
+        .I4(lutram_addr[4]),
+        .I3(lutram_addr[3]),
+        .I2(lutram_addr[2]),
+        .I1(lutram_addr[1]),
+        .I0(lutram_addr[0])
+    );
+`elsif TEST_LUT6_2
+    localparam integer NUM_OUTPUT = 2;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    LUT6_2 #(
+        .INIT(INIT[63:0])
+    ) lut6 (
+        .O5(lutram_do[0]),
+        .O6(lutram_do[1]),
+        .I5(lutram_addr[5]),
+        .I4(lutram_addr[4]),
+        .I3(lutram_addr[3]),
+        .I2(lutram_addr[2]),
+        .I1(lutram_addr[1]),
+        .I0(lutram_addr[0])
+    );
+`elsif TEST_CFGLUT5
+    localparam integer NUM_OUTPUT = 3;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    CFGLUT5 #(
+        .INIT(INIT[31:0]),
+        .IS_CLK_INVERTED(1'b0)
+    ) cfglut5 (
+        .O5(lutram_do[0]),
+        .O6(lutram_do[1]),
+        .CDO(lutram_do[2]),
+        .CDI(lutram_di[0]),
+        .CE(lutram_we & jtag_shift),
+        .CLK(jtag_drck),
+        .I4(lutram_addr[4]),
+        .I3(lutram_addr[3]),
+        .I2(lutram_addr[2]),
+        .I1(lutram_addr[1]),
+        .I0(lutram_addr[0])
+    );
+`elsif TEST_SRL16E
+    localparam integer NUM_OUTPUT = 1;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    SRL16E #(
+        .INIT(INIT[15:0]),
+        .IS_CLK_INVERTED(1'b0)
+    ) srl16e (
+        .Q(lutram_do[0]),
+        .A3(lutram_addr[3]),
+        .A2(lutram_addr[2]),
+        .A1(lutram_addr[1]),
+        .A0(lutram_addr[0]),
+        .CE(lutram_we & jtag_shift),
+        .CLK(jtag_drck),
+        .D(lutram_di[0])
+    );
+`elsif TEST_SRLC16E
+    localparam integer NUM_OUTPUT = 2;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    SRLC16E #(
+        .INIT(INIT[15:0]),
+        .IS_CLK_INVERTED(1'b0)
+    ) srlc16e (
+        .Q(lutram_do[0]),
+        .Q(lutram_do[1]),
+        .A3(lutram_addr[3]),
+        .A2(lutram_addr[2]),
+        .A1(lutram_addr[1]),
+        .A0(lutram_addr[0]),
+        .CE(lutram_we & jtag_shift),
+        .CLK(jtag_drck),
+        .D(lutram_di[0])
+    );
+`elsif TEST_SRLC32E
+    localparam integer NUM_OUTPUT = 2;
+`ifdef YOSYS
+    (* keep *)
+`elsif VIVADO
+    (* KEEP, DONT_TOUCH *)
+`endif
+    SRLC32E #(
+        .INIT(INIT[31:0]),
+        .IS_CLK_INVERTED(1'b0)
+    ) srlc32e (
+        .Q(lutram_do[0]),
+        .Q31(lutram_do[1]),
+        .A(lutram_addr[4:0]),
+        .CE(lutram_we & jtag_shift),
+        .CLK(jtag_drck),
+        .D(lutram_di[0])
+    );
+`elsif TEST_RAMS32
     localparam integer NUM_OUTPUT = 1;
 `ifdef YOSYS
     (* keep *)

@@ -10,7 +10,14 @@
 `define LUTRAM_INIT 256'hDEADBEEF_0150BAD0_CAFEF00D_0F0FFFFF_01234567_89ABCDEF_FEDCBA98_76543210
 `endif
 
-// uncomment one of the TEST_* comments to instantiate the LUTRAM for testing
+// uncomment or define one of the TEST_* comments to instantiate the LUTRAM for testing
+//`define TEST_LUT5
+//`define TEST_LUT6
+//`define TEST_LUT6_2
+//`define TEST_CFGLUT5
+//`define SRL16E
+//`define SRLC16E
+//`define SRLC32E
 //`define TEST_RAMS32
 //`define TEST_RAMD32
 //`define TEST_RAMS64E

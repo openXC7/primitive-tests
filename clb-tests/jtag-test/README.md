@@ -10,8 +10,8 @@ This test is intended to validate functional aspects of LUT_OR_MEM BELs over JTA
 
 ## Tasks
 
-- [ ] Add LUT primitives
 - [ ] Add LUTROM primitives
+- [ ] Verify shift register carry output port
 
 ## Default FPGA Target
 
@@ -51,6 +51,13 @@ make [PART=...] [XDC=...] LUTRAM=<LUTRAM_TYPE> vivadoclean top.vivado.bit
 Available `LUTRAM_TYPE` options:
 
 - Supported by Vivado:
+    - LUT5
+    - LUT6
+    - LUT6_2
+    - CFGLUT5
+    - SRL16E
+    - SRLC16E
+    - SRLC32E
     - RAMS32
     - RAMD32
     - RAMS64E
@@ -79,12 +86,16 @@ make [FAMILY=...] [PART=...] [XDC=...] LUTRAM=<LUTRAM_TYPE> clean top.bit
 Available `LUTRAM_TYPE` options:
 
 - Supported by OpenXC7/NextPNR:
+    - SRL16E
+    - SRLC32E
     - RAM32X1D
     - RAM64X1D
     - RAM128X1D
     - RAM32M
     - RAM64M
 - Not yet supported by OpenXC7/NextPNR:
+    - CFGLUT5
+    - SRLC16E
     - RAMS32
     - RAMD32
     - RAMS64E
