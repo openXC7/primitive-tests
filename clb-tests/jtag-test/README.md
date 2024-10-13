@@ -28,8 +28,8 @@ The main requirements are the following:
 Because JTAG TCK toggles clock to registers and the LUTRAM under test, there is no need to define
 board/pin constraints (unless you want debug LEDs).
 
-To support a new target, update the `FAMILY`/`PART`/`BOARD`/`JTAG_CABLE` variables in the Makefile
-or run make overriding them as in the following example:
+To support a new target, update the `FAMILY`/`PART`/`BOARD`/`JTAG_CABLE` variables in the Makefile,
+or alternatively run make and override them as in the following example:
 
 ```
 make FAMILY=kintex7 PART=xc7k325tffg900-2 BOARD=kc705 JTAG_CABLE=digilent ...
