@@ -25,7 +25,7 @@ ${PROJECT_NAME}.fasm: ${PROJECT_NAME}.json ${CHIPDB}/${DBPART}.bin
 	nextpnr-xilinx --chipdb ${CHIPDB}/${DBPART}.bin --xdc ${PROJECT_NAME}.xdc  --json $< --write ${PROJECT_NAME}_routed.json --fasm $@  --freq 100 #--verbose --debug
 
 ${PROJECT_NAME}.frames: ${PROJECT_NAME}.fasm
-	fasm2frames --part ${PART} --db-root ${DB_DIR}/artix7 $< > $@
+	fasm2frames --part ${PART} --db-root ${DB_DIR}/kintex7 $< > $@
 
 ${PROJECT_NAME}.bit: ${PROJECT_NAME}.frames
 	xc7frames2bit --part_file ${DB_DIR}/artix7/${PART}/part.yaml --part_name ${PART} --frm_file $< --output_file $@
