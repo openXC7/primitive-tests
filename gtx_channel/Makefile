@@ -28,7 +28,7 @@ ${PROJECT_NAME}.frames: ${PROJECT_NAME}.fasm
 	fasm2frames --part ${PART} --db-root ${DB_DIR}/kintex7 $< > $@
 
 ${PROJECT_NAME}.bit: ${PROJECT_NAME}.frames
-	xc7frames2bit --part_file ${DB_DIR}/artix7/${PART}/part.yaml --part_name ${PART} --frm_file $< --output_file $@
+	xc7frames2bit --part_file ${DB_DIR}/kintex7/${PART}/part.yaml --part_name ${PART} --frm_file $< --output_file $@
 
 .PHONY: clean pnrclean
 clean:
