@@ -7,9 +7,9 @@
 //                   https://github.com/enjoy-digital/litex
 //
 // Filename   : top.v
-// Device     : xc7k160tffg676-2
+// Device     : xc7k70t-fbg676-1
 // LiteX sha1 : dd54d77db
-// Date       : 2025-03-03 08:37:19
+// Date       : 2025-04-08 12:36:07
 //------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
@@ -20,12 +20,11 @@
 
 module gtx_channel (
     input  wire          clk200_n,
-    (* dont_touch = "true" *)
     input  wire          clk200_p,
-    input  wire          usb3a_rx_n,
-    input  wire          usb3a_rx_p,
-    output wire          usb3a_tx_n,
-    output wire          usb3a_tx_p,
+    input  wire          pcie_rx_n,
+    input  wire          pcie_rx_p,
+    output wire          pcie_tx_n,
+    output wire          pcie_tx_p,
     output wire          user_led0,
     output wire          user_led1,
     output wire          user_led2,
@@ -47,15 +46,7 @@ wire          clkout0;
 wire          clkout1;
 wire          clkout_buf0;
 wire          clkout_buf1;
-reg    [31:0] clock_rx_cycles_storage = 32'd0;
-reg    [31:0] clock_tx_cycles_storage = 32'd0;
-reg     [1:0] config0 = 2'd0;
-reg     [1:0] config1 = 2'd0;
-reg     [2:0] config2 = 3'd0;
 reg    [31:0] counter = 32'd0;
-reg           enable0 = 1'd1;
-reg           enable1 = 1'd0;
-reg           enable2 = 1'd1;
 reg     [2:0] f_self0 = 3'd0;
 reg     [2:0] f_self1 = 3'd0;
 wire          gpll_clk;
@@ -158,10 +149,10 @@ wire          gtx_drp_mux_rdy;
 reg           gtx_drp_mux_we = 1'd0;
 reg           gtx_drp_rdy = 1'd0;
 reg           gtx_drp_we = 1'd0;
-wire    [7:0] gtx_encoder0;
-wire    [7:0] gtx_encoder1;
-wire          gtx_encoder2;
-wire          gtx_encoder3;
+reg     [7:0] gtx_encoder0 = 8'd0;
+reg     [7:0] gtx_encoder1 = 8'd0;
+reg           gtx_encoder2 = 1'd0;
+reg           gtx_encoder3 = 1'd0;
 reg     [9:0] gtx_encoder4 = 10'd0;
 reg     [9:0] gtx_encoder5 = 10'd0;
 reg           gtx_encoder6 = 1'd0;
@@ -203,7 +194,7 @@ reg     [9:0] gtx_encoder_singleencoder1_output = 10'd0;
 reg     [3:0] gtx_encoder_singleencoder1_output_4b = 4'd0;
 reg     [5:0] gtx_encoder_singleencoder1_output_6b = 6'd0;
 wire    [9:0] gtx_encoder_singleencoder1_output_msb_first;
-wire    [2:0] gtx_loopback;
+reg     [2:0] gtx_loopback = 3'd0;
 wire    [1:0] gtx_prbsrx_config0;
 wire    [1:0] gtx_prbsrx_config1;
 reg    [31:0] gtx_prbsrx_errors = 32'd0;
@@ -243,7 +234,7 @@ reg    [30:0] gtx_prbstx_prbs31_state = 31'd1;
 reg    [19:0] gtx_prbstx_prbs7_o = 20'd0;
 reg     [6:0] gtx_prbstx_prbs7_state = 7'd1;
 reg    [19:0] gtx_prbstx_prbs_data = 20'd0;
-wire          gtx_rx_enable;
+reg           gtx_rx_enable = 1'd1;
 reg           gtx_rx_init_Xxdlysreset0 = 1'd0;
 reg           gtx_rx_init_Xxdlysreset1 = 1'd0;
 wire          gtx_rx_init_Xxdlysresetdone0;
@@ -277,11 +268,11 @@ wire          gtx_rx_init_restart;
 reg    [16:0] gtx_rx_init_watchdog_count = 17'd100000;
 wire          gtx_rx_init_watchdog_done;
 wire          gtx_rx_init_watchdog_wait;
-wire    [1:0] gtx_rx_prbs_config0;
+reg     [1:0] gtx_rx_prbs_config0 = 2'd0;
 wire    [1:0] gtx_rx_prbs_config1;
 wire   [31:0] gtx_rx_prbs_errors0;
 wire   [31:0] gtx_rx_prbs_errors1;
-wire          gtx_rx_prbs_pause0;
+reg           gtx_rx_prbs_pause0 = 1'd0;
 wire          gtx_rx_prbs_pause1;
 wire          gtx_rx_ready;
 (* dont_touch = "true" *)
@@ -289,8 +280,8 @@ reg           gtx_rx_reset_deglitched = 1'd0;
 wire   [19:0] gtx_rxdata;
 wire          gtx_rxoutclk;
 reg     [3:0] gtx_sel = 4'd0;
-wire          gtx_tx_enable;
-wire          gtx_tx_inhibit;
+reg           gtx_tx_enable = 1'd1;
+reg           gtx_tx_inhibit = 1'd0;
 reg           gtx_tx_init_Xxdlysreset0 = 1'd0;
 reg           gtx_tx_init_Xxdlysreset1 = 1'd0;
 wire          gtx_tx_init_Xxdlysresetdone0;
@@ -326,7 +317,7 @@ wire          gtx_tx_init_watchdog_done;
 wire          gtx_tx_init_watchdog_wait;
 reg    [19:0] gtx_tx_pattern0 = 20'd0;
 wire   [19:0] gtx_tx_pattern1;
-wire    [1:0] gtx_tx_prbs_config0;
+reg     [1:0] gtx_tx_prbs_config0 = 2'd0;
 wire    [1:0] gtx_tx_prbs_config1;
 reg           gtx_tx_produce_pattern0 = 1'd0;
 wire          gtx_tx_produce_pattern1;
@@ -342,15 +333,10 @@ reg     [3:0] gtxrxinit_next_state = 4'd0;
 reg     [3:0] gtxrxinit_state = 4'd0;
 reg     [3:0] gtxtxinit_next_state = 4'd0;
 reg     [3:0] gtxtxinit_state = 4'd0;
-reg           inhibit = 1'd0;
-reg           pause = 1'd0;
 wire          pll_fb;
 wire          pll_locked;
 reg           pll_power_down = 1'd0;
 wire          pll_reset;
-reg           re = 1'd0;
-wire          ready0;
-wire          ready1;
 wire          refclk_clk;
 wire          refclk_rst;
 wire          reset0;
@@ -376,18 +362,7 @@ reg     [3:0] rhs_self9 = 4'd0;
 reg           rst = 1'd0;
 (* dont_touch = "true" *)
 wire          rx_clk;
-reg    [31:0] rx_cycles = 32'd0;
 wire          rx_rst;
-wire    [1:0] sink_payload_ctrl;
-reg    [15:0] sink_payload_data = 16'd0;
-wire          sink_ready;
-wire          sink_valid;
-reg     [1:0] source_payload_ctrl = 2'd0;
-reg    [15:0] source_payload_data = 16'd0;
-wire          source_valid;
-wire   [31:0] status;
-reg           swap0 = 1'd0;
-reg           swap1 = 1'd0;
 (* dont_touch = "true" *)
 wire          sys_clk;
 wire          sys_rst;
@@ -397,12 +372,6 @@ reg     [2:0] t_self2 = 3'd0;
 reg     [2:0] t_self3 = 3'd0;
 (* dont_touch = "true" *)
 wire          tx_clk;
-reg    [31:0] tx_cycles = 32'd0;
-reg     [3:0] tx_diffctrl_storage = 4'd8;
-reg           tx_postcursor_inv_storage = 1'd0;
-reg     [4:0] tx_postcursor_storage = 5'd0;
-reg           tx_precursor_inv_storage = 1'd0;
-reg     [4:0] tx_precursor_storage = 5'd0;
 wire          tx_rst;
 wire          xilinxasyncresetsynchronizerimpl0;
 wire          xilinxasyncresetsynchronizerimpl0_rst_meta;
@@ -484,13 +453,7 @@ reg           xilinxmultiregimpl91 = 1'd0;
 //------------------------------------------------------------------------------
 
 assign pll_reset = rst;
-assign sink_valid = 1'd1;
-assign sink_payload_ctrl = 1'd1;
-always @(*) begin
-    sink_payload_data <= 16'd0;
-    sink_payload_data[7:0] <= 8'd188;
-    sink_payload_data[15:8] <= counter;
-end
+assign gtx_tx_produce_square_wave0 = 1'd1;
 assign user_led0 = counter[24];
 assign user_led1 = gpll_lock;
 assign user_led2 = 1'd0;
@@ -524,33 +487,6 @@ assign gtx_prbsrx_pause = gtx_rx_prbs_pause1;
 assign gtx_rx_prbs_errors1 = gtx_prbsrx_errors;
 assign gtx_decoder0_input = gtx_rxdata[9:0];
 assign gtx_decoder1_input = gtx_rxdata[19:10];
-assign sink_ready = 1'd1;
-assign source_valid = 1'd1;
-assign gtx_encoder2 = sink_payload_ctrl[0];
-assign gtx_encoder0 = sink_payload_data[7:0];
-assign gtx_encoder3 = sink_payload_ctrl[1];
-assign gtx_encoder1 = sink_payload_data[15:8];
-always @(*) begin
-    source_payload_ctrl <= 2'd0;
-    source_payload_ctrl[0] <= gtx_decoder0_k;
-    source_payload_ctrl[1] <= gtx_decoder1_k;
-end
-always @(*) begin
-    source_payload_data <= 16'd0;
-    source_payload_data[7:0] <= gtx_decoder0_d;
-    source_payload_data[15:8] <= gtx_decoder1_d;
-end
-assign gtx_tx_enable = enable0;
-assign ready0 = gtx_tx_ready;
-assign gtx_tx_inhibit = inhibit;
-assign gtx_tx_produce_square_wave0 = enable1;
-assign gtx_rx_enable = enable2;
-assign ready1 = gtx_rx_ready;
-assign gtx_tx_prbs_config0 = config0;
-assign gtx_rx_prbs_config0 = config1;
-assign gtx_rx_prbs_pause0 = pause;
-assign status = gtx_rx_prbs_errors0;
-assign gtx_loopback = config2;
 assign gtx_encoder_ce1 = gtx_encoder_ce0;
 assign gtx_encoder_ce2 = gtx_encoder_ce0;
 assign gtx_encoder_singleencoder1_disp_in = gtx_encoder_singleencoder0_disp_out;
@@ -2048,7 +1984,6 @@ assign gtx_prbsrx_config1 = xilinxmultiregimpl161;
 
 always @(posedge rx_clk) begin
     gtx_prbsrx_i <= gtx_rxdata;
-    rx_cycles <= (rx_cycles + 1'd1);
     if (gtx_decoder0_ce) begin
         gtx_decoder0_k <= 1'd0;
         if ((gtx_decoder0_input_msb_first[9:4] == 4'd15)) begin
@@ -2221,7 +2156,6 @@ always @(posedge rx_clk) begin
         gtx_prbsrx_prbs31_state <= 31'd1;
         gtx_prbsrx_prbs31_i_last <= 20'd0;
         gtx_prbsrx_prbs31_count <= 11'd1024;
-        rx_cycles <= 32'd0;
     end
     xilinxmultiregimpl40 <= gtx_rx_prbs_config0;
     xilinxmultiregimpl41 <= xilinxmultiregimpl40;
@@ -2233,10 +2167,6 @@ end
 
 always @(posedge sys_clk) begin
     gtx_tx_reset_deglitched <= (~gtx_tx_init_done);
-    if (re) begin
-        clock_tx_cycles_storage <= tx_cycles;
-        clock_rx_cycles_storage <= rx_cycles;
-    end
     gtx_tx_init_Xxphaligndone_r <= gtx_tx_init_Xxphaligndone1;
     gtx_tx_init_gtXxreset0 <= gtx_tx_init_gtXxreset1;
     gtx_tx_init_gtXxpd0 <= gtx_tx_init_gtXxpd1;
@@ -2315,8 +2245,6 @@ always @(posedge sys_clk) begin
         gtx_rx_init_cdr_lock_timer_count <= 11'd1024;
         gtx_rx_init_watchdog_count <= 17'd100000;
         gtx_tx_reset_deglitched <= 1'd0;
-        clock_tx_cycles_storage <= 32'd0;
-        clock_rx_cycles_storage <= 32'd0;
         gtxtxinit_state <= 4'd0;
         gtxrxinit_state <= 4'd0;
     end
@@ -2343,7 +2271,6 @@ end
 always @(posedge tx_clk) begin
     counter <= (counter + 1'd1);
     gtx_rx_reset_deglitched <= (~gtx_rx_init_done);
-    tx_cycles <= (tx_cycles + 1'd1);
     if (gtx_encoder_ce0) begin
         gtx_encoder_singleencoder0_disp_in <= gtx_encoder_singleencoder1_disp_out;
     end
@@ -2440,7 +2367,6 @@ always @(posedge tx_clk) begin
         gtx_prbstx_prbs15_state <= 15'd1;
         gtx_prbstx_prbs31_o <= 20'd0;
         gtx_prbstx_prbs31_state <= 31'd1;
-        tx_cycles <= 32'd0;
         counter <= 32'd0;
     end
     xilinxmultiregimpl00 <= gtx_tx_produce_square_wave0;
@@ -2938,8 +2864,8 @@ GTXE2_CHANNEL #(
 	.GTSOUTHREFCLK0   (1'd0),
 	.GTSOUTHREFCLK1   (1'd0),
 	.GTTXRESET        (gtx_tx_init_gtXxreset0),
-	.GTXRXN           (usb3a_rx_n),
-	.GTXRXP           (usb3a_rx_p),
+	.GTXRXN           (pcie_rx_n),
+	.GTXRXP           (pcie_rx_p),
 	.LOOPBACK         (gtx_loopback),
 	.PCSRSVDIN        (1'd0),
 	.PCSRSVDIN2       (1'd0),
@@ -3010,7 +2936,7 @@ GTXE2_CHANNEL #(
 	.RXPHDLYRESET     (1'd0),
 	.RXPHOVRDEN       (1'd0),
 	.RXPMARESET       (1'd0),
-	.RXPOLARITY       (swap1),
+	.RXPOLARITY       (1'd0),
 	.RXPRBSCNTRESET   (1'd0),
 	.RXPRBSSEL        (1'd0),
 	.RXQPIEN          (1'd0),
@@ -3034,7 +2960,7 @@ GTXE2_CHANNEL #(
 	.TXDATA           ({gtx_txdata[17:10], gtx_txdata[7:0]}),
 	.TXDEEMPH         (1'd0),
 	.TXDETECTRX       (1'd0),
-	.TXDIFFCTRL       (tx_diffctrl_storage),
+	.TXDIFFCTRL       (4'd8),
 	.TXDIFFPD         (1'd0),
 	.TXDLYBYPASS      (1'd1),
 	.TXDLYEN          (1'd0),
@@ -3060,13 +2986,13 @@ GTXE2_CHANNEL #(
 	.TXPHOVRDEN       (1'd0),
 	.TXPISOPD         (1'd0),
 	.TXPMARESET       (1'd0),
-	.TXPOLARITY       (swap0),
-	.TXPOSTCURSOR     (tx_postcursor_storage),
-	.TXPOSTCURSORINV  (tx_postcursor_inv_storage),
+	.TXPOLARITY       (1'd0),
+	.TXPOSTCURSOR     (1'd0),
+	.TXPOSTCURSORINV  (1'd0),
 	.TXPRBSFORCEERR   (1'd0),
 	.TXPRBSSEL        (1'd0),
-	.TXPRECURSOR      (tx_precursor_storage),
-	.TXPRECURSORINV   (tx_precursor_inv_storage),
+	.TXPRECURSOR      (1'd0),
+	.TXPRECURSORINV   (1'd0),
 	.TXQPIBIASEN      (1'd0),
 	.TXQPISTRONGPDOWN (1'd0),
 	.TXQPIWEAKPUP     (1'd0),
@@ -3088,8 +3014,8 @@ GTXE2_CHANNEL #(
 	.DRPRDY           (gtx_drp_mux_rdy),
 	.EYESCANDATAERROR (gtx8),
 	.GTREFCLKMONITOR  (gtx4),
-	.GTXTXN           (usb3a_tx_n),
-	.GTXTXP           (usb3a_tx_p),
+	.GTXTXN           (pcie_tx_n),
+	.GTXTXP           (pcie_tx_p),
 	.PCSRSVDOUT       (gtx39),
 	.PHYSTATUS        (gtx6),
 	.RXBUFSTATUS      (gtx13),
@@ -3305,5 +3231,5 @@ FDPE #(
 endmodule
 
 // -----------------------------------------------------------------------------
-//  Auto-Generated by LiteX on 2025-03-03 08:37:19.
+//  Auto-Generated by LiteX on 2025-04-08 12:36:07.
 //------------------------------------------------------------------------------

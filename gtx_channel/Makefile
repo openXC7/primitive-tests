@@ -4,7 +4,7 @@ PREFIX=../../../nextpnr-xilinx/xilinx/
 DB_DIR=${PREFIX}/external/prjxray-db
 CHIPDB=../chipdb
 
-PART = xc7k160tffg676-2
+PART = xc7k70tfbg676-1
 DBPART = $(shell echo ${PART} | sed -e 's/-[0-9]//g')
 SPEEDGRADE = $(shell echo ${PART} | sed -e 's/.*\-\([0-9]\)/\1/g')
 
@@ -31,7 +31,7 @@ ${PROJECT_NAME}.bit: ${PROJECT_NAME}.frames
 	xc7frames2bit --part_file ${DB_DIR}/kintex7/${PART}/part.yaml --part_name ${PART} --frm_file $< --output_file $@
 
 .PHONY: clean pnrclean
-clean:
+clean: vclean
 	@rm -f *.bit
 	@rm -f *.frames
 	@rm -f *.fasm
@@ -40,3 +40,5 @@ clean:
 pnrclean:
 	rm *.fasm *.frames *.bit
 
+vclean:
+	rm *.log *.jou

@@ -6,7 +6,7 @@ import sys
 
 from migen import *
 from litex.gen import *
-from litex_boards.platforms import enclustra_mercury_kx2, enclustra_st1
+from litex_boards.platforms import hyvision_pcie_opt01_revf
 from litex.build.generic_platform import *
 from litex.build.xilinx.vivado import XilinxVivadoToolchain
 from litex.soc.cores.clock import *
@@ -16,13 +16,13 @@ from litex.soc.cores.code_8b10b import K
 
 # To put these signals on the USB-A port, make sure that DIP switches 3 and 4 are ON
 _io = [
-    ("usb3a_tx", 0,
-        Subsignal("p", Pins("B:29")),
-        Subsignal("n", Pins("B:33"))
+    ("pcie_tx", 0,
+        Subsignal("p",  Pins("A4")),
+        Subsignal("n",  Pins("A3"))
     ),
-    ("usb3a_rx", 0,
-        Subsignal("p", Pins("B:32")),
-        Subsignal("n", Pins("B:36"))
+    ("pcie_rx", 0,
+        Subsignal("p",  Pins("B6")),
+        Subsignal("n",  Pins("B5")),
     ),
 ]
 
@@ -64,8 +64,8 @@ class TestDesign(LiteXModule):
         print(gpll)
 
         # GTP --------------------------------------------------------------------------------------
-        tx_pads = platform.request("usb3a_tx")
-        rx_pads = platform.request("usb3a_rx")
+        tx_pads = platform.request("pcie_tx")
+        rx_pads = platform.request("pcie_rx")
 
         self.serdes0 = serdes0 = GTX(gpll, tx_pads, rx_pads, sys_clk_freq,
             tx_buffer_enable = True,
@@ -125,11 +125,10 @@ class TestDesign(LiteXModule):
 def main():
     #toolchain = "openxc7"
     toolchain = "vivado"
-    platform = enclustra_mercury_kx2.Platform(toolchain=toolchain)
-    platform.add_baseboard(enclustra_st1.EnclustraST1())
+    platform = hyvision_pcie_opt01_revf.Platform(toolchain=toolchain)
     platform.add_extension(_io)
-    crg = TestDesign(platform, 100e6)
-    platform.build(crg)
+    design = TestDesign(platform, 100e6)
+    platform.build(design)
 
 if __name__ == "__main__":
     main()

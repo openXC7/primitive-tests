@@ -2,44 +2,40 @@
 # IO constraints
 ################################################################################
 # clk200:0.p
-set_property LOC AB11 [get_ports {clk200_p}]
-set_property IOSTANDARD LVDS [get_ports {clk200_p}]
+set_property LOC AA10 [get_ports {clk200_p}]
+set_property IOSTANDARD DIFF_SSTL18_II [get_ports {clk200_p}]
 
 # clk200:0.n
-set_property LOC AC11 [get_ports {clk200_n}]
-set_property IOSTANDARD LVDS [get_ports {clk200_n}]
+set_property LOC AB10 [get_ports {clk200_n}]
+set_property IOSTANDARD DIFF_SSTL18_II [get_ports {clk200_n}]
 
-# usb3a_tx:0.p
-set_property LOC K2 [get_ports {usb3a_tx_p}]
+# pcie_tx:0.p
+set_property LOC A4 [get_ports {pcie_tx_p}]
 
-# usb3a_tx:0.n
-set_property LOC K1 [get_ports {usb3a_tx_n}]
+# pcie_tx:0.n
+set_property LOC A3 [get_ports {pcie_tx_n}]
 
-# usb3a_rx:0.p
-set_property LOC L4 [get_ports {usb3a_rx_p}]
+# pcie_rx:0.p
+set_property LOC B6 [get_ports {pcie_rx_p}]
 
-# usb3a_rx:0.n
-set_property LOC L3 [get_ports {usb3a_rx_n}]
+# pcie_rx:0.n
+set_property LOC B5 [get_ports {pcie_rx_n}]
 
 # user_led:0
-set_property LOC U9 [get_ports {user_led0}]
-set_property IOSTANDARD LVCMOS15 [get_ports {user_led0}]
-set_property SLEW SLOW [get_ports {user_led0}]
+set_property LOC D26 [get_ports {user_led0}]
+set_property IOSTANDARD LVCMOS33 [get_ports {user_led0}]
 
 # user_led:1
-set_property LOC V12 [get_ports {user_led1}]
-set_property IOSTANDARD LVCMOS15 [get_ports {user_led1}]
-set_property SLEW SLOW [get_ports {user_led1}]
+set_property LOC D25 [get_ports {user_led1}]
+set_property IOSTANDARD LVCMOS33 [get_ports {user_led1}]
 
 # user_led:2
-set_property LOC V13 [get_ports {user_led2}]
-set_property IOSTANDARD LVCMOS15 [get_ports {user_led2}]
-set_property SLEW SLOW [get_ports {user_led2}]
+set_property LOC C26 [get_ports {user_led2}]
+set_property IOSTANDARD LVCMOS33 [get_ports {user_led2}]
 
 # user_led:3
-set_property LOC W13 [get_ports {user_led3}]
-set_property IOSTANDARD LVCMOS15 [get_ports {user_led3}]
-set_property SLEW SLOW [get_ports {user_led3}]
+set_property LOC C21 [get_ports {user_led3}]
+set_property IOSTANDARD LVCMOS33 [get_ports {user_led3}]
 
 ################################################################################
 # Design constraints
